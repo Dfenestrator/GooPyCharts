@@ -10,39 +10,48 @@ graphPgTemplate = """
 
     function drawChart() {
         var dataArr = %s;
+        var grTitle = '%s';
 
         var options = {
             width: 1000,
             height: 600,
             explorer: { actions: ['dragToZoom', 'rightClickToReset'], maxZoomIn: 0.01 },
             curveType: 'function',
-            title: '%s',
+            title: grTitle,
             titleTextStyle: { fontSize: 18, bold: true },
             hAxis: { title: dataArr[0][0] },
             vAxis: { title: '%s' },
         };
 
         var data = new google.visualization.DataTable();
+        var csvOut = "data:text/csv;charset=utf-8";
         // Add column headers
         for (var j = 0; j < dataArr[0].length; j++)
         {
             data.addColumn('number',dataArr[0][j]);
+            csvOut += ',' + dataArr[0][j];
         }
+        csvOut += '\\n';
 
         // Add columns
         for (var i = 1; i < dataArr.length; i++)
         {
             data.addRow(dataArr[i]);
+            csvOut += dataArr[i].join(",") + '\\n';
         }
 
         var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
 
         chart.draw(data, options);
+        document.getElementById('pic_div').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
+        document.getElementById('csvFileDl').innerHTML = '<a href="' + encodeURI(csvOut) + '" download="'+grTitle+'.csv">Download CSV</a>'
     }
     </script>
 </head>
 <body>
     <div id="chart_div"></div>
+    <div id="pic_div"></div>
+    <div id="csvFileDl"></div>
 </body>
 </html>
 """
