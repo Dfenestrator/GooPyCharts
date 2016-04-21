@@ -1,5 +1,5 @@
 import webbrowser
-from gpcharts import gpchart
+from gpcharts import figure
 
 vals = [
         ['Year', 'Sales', 'Expenses'],
@@ -9,8 +9,9 @@ vals = [
         [2007,  1030,      540]
         ]
 
-fig1 = gpchart()
-fig1.plot(vals)
+fig1 = figure()
+fig1.title = "My Graph!"
+fig1.plot([val[0] for val in vals],[val[1:] for val in vals])
 
-fig2 = gpchart()
-fig2.plot(vals)
+fig2 = figure()
+fig2.plot([vals[i][0] for i in xrange(1,len(vals))],[vals[i][1:] for i in xrange(1,len(vals))])

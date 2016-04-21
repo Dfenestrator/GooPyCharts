@@ -18,7 +18,7 @@ graphPgTemplate = """
             curveType: 'function',
             title: '%s',
             titleTextStyle: { fontSize: 18, bold: true },
-            hAxis: { title: '%s' },
+            hAxis: { title: dataArr[0][0] },
             vAxis: { title: '%s' },
         };
 
@@ -35,39 +35,56 @@ graphPgTemplate = """
             data.addRow(dataArr[i]);
         }
 
-        var chart = new google.visualization.LineChart(document.getElementById('curve_chart'));
+        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
 
         chart.draw(data, options);
     }
     </script>
 </head>
 <body>
-    <div id="curve_chart"></div>
+    <div id="chart_div"></div>
 </body>
 </html>
 """
 
-class gpchart:
+class figure:
    numFigs = 1
 
    def __init__(self,title="Fig",xlabel='',ylabel=''):
-      self.figNum = gpchart.numFigs
-      gpchart.numFigs = gpchart.numFigs + 1
+      self.figNum = figure.numFigs
+      figure.numFigs = figure.numFigs + 1
 
       if title=="Fig":
          self.title = title+str(self.figNum)
       else:
          self.title = title
 
-      self.webPgName = self.title+'.html'
+      self.fname = self.title+'.html'
 
       self.xlabel = xlabel
       self.ylabel = ylabel
 
-   def plot(self,data):
-      f = open(self.webPgName,'w')
-      f.write(graphPgTemplate % (str(data),self.title,self.xlabel,self.ylabel))
+   def plot(self,xdata,ydata):
+      f = open(self.fname,'w')
+
+      #figure out independent variable headers
+      # if there is a title row, use that title
+      if type(ydata[0][0]) is str:
+         data = [[xdata[0]] + ydata[0]]
+         for i in xrange(1,len(xdata)):
+            data.append([xdata[i]]+ydata[i])
+      # otherwise, use a default labeling
+      else:
+         header = [self.xlabel]
+         for i in xrange(len(ydata[0])):
+            header.append('data'+str(i+1))
+
+         data = [header]
+         for i in xrange(len(xdata)):
+            data.append([xdata[i]]+ydata[i])
+
+      f.write(graphPgTemplate % (str(data),self.title,self.ylabel))
       f.close()
 
-      webbrowser.open_new(self.webPgName)
+      webbrowser.open_new(self.fname)
 
