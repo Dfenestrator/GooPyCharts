@@ -40,7 +40,7 @@ graphPgTemplate = """
             csvOut += dataArr[i].join(",") + '\\n';
         }
 
-        var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+        var chart = new google.visualization.%s(document.getElementById('chart_div'));
 
         chart.draw(data, options);
         document.getElementById('pic_div').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
@@ -73,6 +73,7 @@ class figure:
       self.xlabel = xlabel
       self.ylabel = ylabel
 
+   #typical line chart plot
    def plot(self,xdata,ydata):
       f = open(self.fname,'w')
 
@@ -92,7 +93,32 @@ class figure:
          for i in xrange(len(xdata)):
             data.append([xdata[i]]+ydata[i])
 
-      f.write(graphPgTemplate % (str(data),self.title,self.ylabel))
+      f.write(graphPgTemplate % (str(data),self.title,self.ylabel,'LineChart'))
+      f.close()
+
+      webbrowser.open_new(self.fname)
+
+   #scatter plot
+   def scatter(self,xdata,ydata):
+      f = open(self.fname,'w')
+
+      #figure out independent variable headers
+      # if there is a title row, use that title
+      if type(ydata[0][0]) is str:
+         data = [[xdata[0]] + ydata[0]]
+         for i in xrange(1,len(xdata)):
+            data.append([xdata[i]]+ydata[i])
+      # otherwise, use a default labeling
+      else:
+         header = [self.xlabel]
+         for i in xrange(len(ydata[0])):
+            header.append('data'+str(i+1))
+
+         data = [header]
+         for i in xrange(len(xdata)):
+            data.append([xdata[i]]+ydata[i])
+
+      f.write(graphPgTemplate % (str(data),self.title,self.ylabel,'ScatterChart'))
       f.close()
 
       webbrowser.open_new(self.fname)
