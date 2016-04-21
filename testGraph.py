@@ -14,4 +14,4 @@ fig1.title = "My Graph!"
 fig1.plot([val[0] for val in vals],[val[1:] for val in vals])
 
 fig2 = figure()
-fig2.scatter([vals[i][0] for i in xrange(1,len(vals))],[vals[i][1:] for i in xrange(1,len(vals))])
+fig2.scatter([vals[i][0] for i in xrange(1,len(vals))],[vals[i][1:] for i in xrange(1,len(vals))],trendline=True)

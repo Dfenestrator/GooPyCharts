@@ -21,6 +21,7 @@ graphPgTemplate = """
             titleTextStyle: { fontSize: 18, bold: true },
             hAxis: { title: dataArr[0][0] },
             vAxis: { title: '%s' },
+            %s
         };
 
         var data = new google.visualization.DataTable();
@@ -93,13 +94,13 @@ class figure:
          for i in xrange(len(xdata)):
             data.append([xdata[i]]+ydata[i])
 
-      f.write(graphPgTemplate % (str(data),self.title,self.ylabel,'LineChart'))
+      f.write(graphPgTemplate % (str(data),self.title,self.ylabel,'','LineChart'))
       f.close()
 
       webbrowser.open_new(self.fname)
 
    #scatter plot
-   def scatter(self,xdata,ydata):
+   def scatter(self,xdata,ydata,trendline=False):
       f = open(self.fname,'w')
 
       #figure out independent variable headers
@@ -118,7 +119,12 @@ class figure:
          for i in xrange(len(xdata)):
             data.append([xdata[i]]+ydata[i])
 
-      f.write(graphPgTemplate % (str(data),self.title,self.ylabel,'ScatterChart'))
+      if trendline:
+         trendLineStr = 'trendlines: { 0: {} }'
+      else:
+         trendLineStr = ''
+
+      f.write(graphPgTemplate % (str(data),self.title,self.ylabel,trendLineStr,'ScatterChart'))
       f.close()
 
       webbrowser.open_new(self.fname)
