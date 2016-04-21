@@ -51,8 +51,8 @@ class gpchart:
    numFigs = 1
 
    def __init__(self,title="Fig",xlabel='',ylabel=''):
-      self.figNum = self.numFigs
-      self.numFigs = self.numFigs + 1
+      self.figNum = gpchart.numFigs
+      gpchart.numFigs = gpchart.numFigs + 1
 
       if title=="Fig":
          self.title = title+str(self.figNum)

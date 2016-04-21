@@ -9,7 +9,7 @@ vals = [
         [2007,  1030,      540]
         ]
 
-fig1 = gpchart("My Graph","my X","my Y")
+fig1 = gpchart()
 fig1.plot(vals)
 
 fig2 = gpchart()
