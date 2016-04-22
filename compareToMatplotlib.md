@@ -7,6 +7,7 @@
 - Prettier
 - Integrates well with the web. It is very simple to embed a graph produced by GooPyCharts into a webpage (just copy the HTML, if you are interested in doing this and have questions, just ask).
 - Easy to export to image/CSV
+- Works without numpy - just uses Python lists
 
 ## Disadvantages
 - Limited features. Matplotlib has a lot more features and is overall more powerful
