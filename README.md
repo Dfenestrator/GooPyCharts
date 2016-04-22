@@ -30,7 +30,7 @@ For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-
 - automatic datetime/string/numeric detection on x-axis input (a huge pain point in both MATLAB and matplotlib)
 - Easy webpage integration (just copy and paste the HTML/Javascript from the output HTML file)
 
-## Comparisons to matplotlib and MATLAB
+## Comparisons to Matplotlib and MATLAB
 See the readme's compareToMatplotlib.md and compareToMatlab.md.
 
 Please report bugs to me and I'll do my best to fix them in short order.
