@@ -20,12 +20,14 @@ graphPgTemplateStart = """
     function drawChart() {
         var dataArr = %s;
         var grTitle = '%s';
+        var width = %d;
+        var height = %d;
 """
 
 graphPgTemplate_numeric = """
         var options = {
-            width: 1000,
-            height: 600,
+            width: width,
+            height: height,
             explorer: { actions: ['dragToZoom', 'rightClickToReset'], maxZoomIn: 0.01 },
             curveType: 'function',
             title: grTitle,
@@ -55,8 +57,8 @@ graphPgTemplate_numeric = """
 
 graphPgTemplate_string = """
         var options = {
-            width: 1000,
-            height: 600,
+            width: width,
+            height: height,
             explorer: { actions: ['dragToZoom', 'rightClickToReset'], maxZoomIn: 0.01 },
             curveType: 'function',
             title: grTitle,
@@ -88,8 +90,8 @@ graphPgTemplate_string = """
 
 graphPgTemplate_dateTime = """
         var options = {
-            width: 1000,
-            height: 600,
+            width: width,
+            height: height,
             explorer: { actions: ['dragToZoom', 'rightClickToReset'], maxZoomIn: 0.01 },
             curveType: 'function',
             title: grTitle,
@@ -213,7 +215,7 @@ def combineData(xdata,ydata,xlabel):
 class figure:
    numFigs = 1
 
-   def __init__(self,title="Fig",xlabel='',ylabel=''):
+   def __init__(self,title="Fig",xlabel='',ylabel='',height=1000,width=600):
       #set figure number, and increment for each instance
       self.figNum = figure.numFigs
       figure.numFigs = figure.numFigs + 1
@@ -228,6 +230,9 @@ class figure:
 
       self.xlabel = xlabel
       self.ylabel = ylabel
+      #for sizing plot
+      self.height = height
+      self.width = width
 
    #typical line chart plot
    def plot(self,xdata,ydata):
@@ -237,7 +242,8 @@ class figure:
       data = combineData(xdata,ydata,self.xlabel)
 
       #input argument format to template is: data, title, y label, trendline/additional options, chart type
-      f.write(templateType(xdata) % (str(data),self.title,self.ylabel,'','LineChart'))
+      f.write(templateType(xdata) % 
+              (str(data),self.title,self.height,self.width,self.ylabel,'','LineChart'))
       f.close()
 
       webbrowser.open_new(self.fname)
@@ -256,7 +262,8 @@ class figure:
          trendLineStr = ''
 
       #input argument format to template is: data, title, y label, trendline/additional options, chart type
-      f.write(templateType(xdata) % (str(data),self.title,self.ylabel,trendLineStr,'ScatterChart'))
+      f.write(templateType(xdata) % 
+              (str(data),self.title,self.height,self.width,self.ylabel,trendLineStr,'ScatterChart'))
       f.close()
 
       webbrowser.open_new(self.fname)

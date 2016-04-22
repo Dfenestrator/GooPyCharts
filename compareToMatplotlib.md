@@ -11,4 +11,4 @@
 
 ## Disadvantages
 - Limited features. Matplotlib has a lot more features and is overall more powerful
-- No graph scalability. Right now graph sizing is not supported at all, and when it is supported it will be static
+- Dynamic graph resizing

@@ -5,7 +5,7 @@ fig1 = figure()
 fig1.plot([1,2,3,4,5],[8,7,6,5,4])
 
 #another line graph, but with two data types. Also adding title
-fig2 = figure(title='Two lines',xlabel='Days',ylabel='Count')
+fig2 = figure(title='Two lines',xlabel='Days',ylabel='Count',height=600,width=600)
 xVals = ['Mon','Tues','Wed','Thurs','Fri']
 yVals = [[5,4],[8,7],[4,8],[10,10],[3,12]]
 fig2.plot(xVals,yVals)
@@ -14,6 +14,9 @@ fig2.plot(xVals,yVals)
 fig3 = figure()
 fig3.title = 'Weather over Days'
 fig3.ylabel = 'Temperature'
+#modify size of graph
+fig3.height = 1200
+fig3.width = 800
 
 # X data can take either of the following formats: "yyyy-mm-dd HH:MM:SS" or "yyyy-mm-dd" (but be consistent)
 #xVals = ['Dates','2016-03-20 00:00:00','2016-03-21 00:00:00','2016-03-25 00:00:00','2016-04-01 00:00:00']
