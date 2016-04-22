@@ -1,17 +1,24 @@
-import webbrowser
 from gpcharts import figure
 
-vals = [
-        ['Year', 'Sales', 'Expenses'],
-        [2004,  1000,      400],
-        [2005,  1170,      460],
-        [2006,  660,       1120],
-        [2007,  1030,      540]
-        ]
-
+#simple line graph, as described in the readme.
 fig1 = figure()
-fig1.title = "My Graph!"
-fig1.plot([val[0] for val in vals],[val[1:] for val in vals])
+fig1.plot([1,2,3,4,5],[8,7,6,5,4])
 
-fig2 = figure()
-fig2.scatter([vals[i][0] for i in xrange(1,len(vals))],[vals[i][1:] for i in xrange(1,len(vals))],trendline=True)
+#another line graph, but with two data types. Also adding title
+fig2 = figure(title='Two lines',xlabel='Days',ylabel='Count')
+xVals = ['Mon','Tues','Wed','Thurs','Fri']
+yVals = [[5,4],[8,7],[4,8],[10,10],[3,12]]
+fig2.plot(xVals,yVals)
+
+#a graph with dates and times. Title is assigned afterwards, and data is given headers
+fig3 = figure()
+fig3.title = 'Weather over Days'
+fig3.ylabel = 'Temperature'
+
+xVals = ['Dates','2016-03-20 00:00:00','2016-03-21 00:00:00','2016-03-25 00:00:00','2016-04-01 00:00:00']
+yVals = [['Shakuras','Korhal','Aiur'],[10,30,40],[12,28,41],[15,34,38],[8,33,47]]
+fig3.plot(xVals,yVals)
+
+#a simple scatter plot
+fig4 = figure('Strong Correlation')
+fig4.scatter([1,2,3,4,5],[[1,5],[2,4],[3,3],[4,2],[5,1]])

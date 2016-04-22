@@ -1,3 +1,10 @@
+##
+# Copyright 2016 Sagnik Ghosh, licensed under the Apache 2.0 License.
+#
+# GooPyCharts: an interface between Python and Google Charts API. Written to serve as a simple substitute
+# for matplotlib. Syntax is similar to MATLAB figures.
+##
+
 import webbrowser
 
 graphPgTemplate = """
@@ -202,6 +209,8 @@ graphPgTemplate_dateTime = """
 </body>
 </html>
 """
+
+##main class
 class figure:
    numFigs = 1
 
@@ -224,6 +233,10 @@ class figure:
    #typical line chart plot
    def plot(self,xdata,ydata):
       f = open(self.fname,'w')
+    
+      #if ydata is a simple vector, encapsulate it into a 2D list
+      if type(ydata[1]) is int:
+          ydata = [[val] for val in ydata]
 
       #figure out independent variable headers
       # if there is a title row, use that title
@@ -263,6 +276,10 @@ class figure:
    #scatter plot
    def scatter(self,xdata,ydata,trendline=False):
       f = open(self.fname,'w')
+
+      #if ydata is a simple vector, encapsulate it into a 2D list
+      if type(ydata[1]) is int:
+          ydata = [[val] for val in ydata]
 
       #figure out independent variable headers
       # if there is a title row, use that title
