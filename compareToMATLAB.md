@@ -3,7 +3,7 @@
 ## Advantages
 - It uses Python! One big advantage here is text/file processing
 - It is free!
-- Tooltips! (You highlight a point on the graph and it tells you what the point is)
+- Tooltips! (You highlight a point on the graph and it tells you what the point is, so integration is better than MATLAB's)
 - Prettier
 - Integrates well with the web. It is very simple to embed a graph produced by GooPyCharts into a webpage (just copy the HTML, if you are interested in doing this and have questions, just ask).
 
