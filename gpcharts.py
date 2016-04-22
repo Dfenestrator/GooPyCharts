@@ -226,6 +226,29 @@ def templateType(xdata):
         #otherwise, data is simply numeric
         return graphPgTemplate
 
+#helper function to combine data
+def combineData(xdata,ydata,xlabel):
+    #if ydata is a simple vector, encapsulate it into a 2D list
+    if type(ydata[1]) is int:
+        ydata = [[val] for val in ydata]
+
+    #figure out independent variable headers
+    # if there is a title row, use that title
+    if type(ydata[0][0]) is str:
+        data = [[xdata[0]] + ydata[0]]
+        for i in xrange(1,len(xdata)):
+            data.append([xdata[i]]+ydata[i])
+    # otherwise, use a default labeling
+    else:
+        header = [xlabel]
+        for i in xrange(len(ydata[0])):
+            header.append('data'+str(i+1))
+
+        data = [header]
+        for i in xrange(len(xdata)):
+            data.append([xdata[i]]+ydata[i])
+    
+    return data
 
 ##main class
 class figure:
@@ -251,25 +274,8 @@ class figure:
    def plot(self,xdata,ydata):
       f = open(self.fname,'w')
     
-      #if ydata is a simple vector, encapsulate it into a 2D list
-      if type(ydata[1]) is int:
-          ydata = [[val] for val in ydata]
-
-      #figure out independent variable headers
-      # if there is a title row, use that title
-      if type(ydata[0][0]) is str:
-         data = [[xdata[0]] + ydata[0]]
-         for i in xrange(1,len(xdata)):
-            data.append([xdata[i]]+ydata[i])
-      # otherwise, use a default labeling
-      else:
-         header = [self.xlabel]
-         for i in xrange(len(ydata[0])):
-            header.append('data'+str(i+1))
-
-         data = [header]
-         for i in xrange(len(xdata)):
-            data.append([xdata[i]]+ydata[i])
+      #combine data into proper format
+      data = combineData(xdata,ydata,self.xlabel)
 
       #input argument format to template is: data, title, y label, trendline/additional options, chart type
       f.write(templateType(xdata) % (str(data),self.title,self.ylabel,'','LineChart'))
@@ -281,25 +287,8 @@ class figure:
    def scatter(self,xdata,ydata,trendline=False):
       f = open(self.fname,'w')
 
-      #if ydata is a simple vector, encapsulate it into a 2D list
-      if type(ydata[1]) is int:
-          ydata = [[val] for val in ydata]
-
-      #figure out independent variable headers
-      # if there is a title row, use that title
-      if type(ydata[0][0]) is str:
-         data = [[xdata[0]] + ydata[0]]
-         for i in xrange(1,len(xdata)):
-            data.append([xdata[i]]+ydata[i])
-      # otherwise, use a default labeling
-      else:
-         header = [self.xlabel]
-         for i in xrange(len(ydata[0])):
-            header.append('data'+str(i+1))
-
-         data = [header]
-         for i in xrange(len(xdata)):
-            data.append([xdata[i]]+ydata[i])
+      #combine data into proper format
+      data = combineData(xdata,ydata,self.xlabel)
 
       #insert trend line, if flag is set
       if trendline:
