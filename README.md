@@ -30,6 +30,11 @@ For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-
 - automatic datetime/string/numeric detection on x-axis input (a huge pain point in both MATLAB and matplotlib)
 - Easy webpage integration (just copy and paste the HTML/Javascript from the output HTML file)
 
+## Some Rules
+- Headers are column titles. The dependent variable header will be the title of the x axis, and the other headers will appear in the legend.
+- If you have headers on your dependent variables, make sure to also have a header on the independent variable.
+- The header on the x axis will supercede the x label. This is not true for the y label.
+
 ## Comparisons to matplotlib and MATLAB
 See the readme's compareToMatplotlib.md and compareToMatlab.md.
 
