@@ -15,7 +15,9 @@ fig3 = figure()
 fig3.title = 'Weather over Days'
 fig3.ylabel = 'Temperature'
 
-xVals = ['Dates','2016-03-20 00:00:00','2016-03-21 00:00:00','2016-03-25 00:00:00','2016-04-01 00:00:00']
+# X data can take either of the following formats: "yyyy-mm-dd HH:MM:SS" or "yyyy-mm-dd" (but be consistent)
+#xVals = ['Dates','2016-03-20 00:00:00','2016-03-21 00:00:00','2016-03-25 00:00:00','2016-04-01 00:00:00']
+xVals = ['Dates','2016-03-20','2016-03-21','2016-03-25','2016-04-01']
 yVals = [['Shakuras','Korhal','Aiur'],[10,30,40],[12,28,41],[15,34,38],[8,33,47]]
 fig3.plot(xVals,yVals)
 

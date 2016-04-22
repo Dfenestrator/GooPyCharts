@@ -8,7 +8,8 @@
 import webbrowser
 
 #The webpage templates. One each for numeric, datetime, and string as the independent variable.
-graphPgTemplate = """
+#Compressed the start and end of the template into 1 string to shorten number of lines of code.
+graphPgTemplateStart = """
 <html>
 <head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -19,7 +20,9 @@ graphPgTemplate = """
     function drawChart() {
         var dataArr = %s;
         var grTitle = '%s';
+"""
 
+graphPgTemplate_numeric = """
         var options = {
             width: 1000,
             height: 600,
@@ -48,35 +51,9 @@ graphPgTemplate = """
             data.addRow(dataArr[i]);
             csvOut += dataArr[i].join(",") + '\\n';
         }
-
-        var chart = new google.visualization.%s(document.getElementById('chart_div'));
-
-        chart.draw(data, options);
-        document.getElementById('pic_div').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
-        document.getElementById('csvFileDl').innerHTML = '<a href="' + encodeURI(csvOut) + '" download="'+grTitle+'.csv">Download CSV</a>'
-    }
-    </script>
-</head>
-<body>
-    <div id="chart_div"></div>
-    <div id="pic_div"></div>
-    <div id="csvFileDl"></div>
-</body>
-</html>
 """
 
 graphPgTemplate_string = """
-<html>
-<head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-        var dataArr = %s;
-        var grTitle = '%s';
-
         var options = {
             width: 1000,
             height: 600,
@@ -107,35 +84,9 @@ graphPgTemplate_string = """
             data.addRow(dataArr[i]);
             csvOut += dataArr[i].join(",") + '\\n';
         }
-
-        var chart = new google.visualization.%s(document.getElementById('chart_div'));
-
-        chart.draw(data, options);
-        document.getElementById('pic_div').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
-        document.getElementById('csvFileDl').innerHTML = '<a href="' + encodeURI(csvOut) + '" download="'+grTitle+'.csv">Download CSV</a>'
-    }
-    </script>
-</head>
-<body>
-    <div id="chart_div"></div>
-    <div id="pic_div"></div>
-    <div id="csvFileDl"></div>
-</body>
-</html>
 """
 
 graphPgTemplate_dateTime = """
-<html>
-<head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <script type="text/javascript">
-    google.charts.load('current', {'packages':['corechart']});
-    google.charts.setOnLoadCallback(drawChart);
-
-    function drawChart() {
-        var dataArr = %s;
-        var grTitle = '%s';
-
         var options = {
             width: 1000,
             height: 600,
@@ -194,7 +145,9 @@ graphPgTemplate_dateTime = """
             data.addRow(tmpArr.concat(dataArr[i+1].slice(1,dataArr[i+1].length)));
             csvOut += tempStr + ',' + dataArr[i+1].slice(1,dataArr[i+1].length).join(",") + '\\n';
         }
+"""
 
+graphPgTemplateEnd = """
         var chart = new google.visualization.%s(document.getElementById('chart_div'));
 
         chart.draw(data, options);
@@ -216,21 +169,27 @@ def templateType(xdata):
     #check if x axis is numeric, string, or datetime
     if type(xdata[1]) is str:
         #check if first 4 characters of xdata is a valid year
-        if len(xdata[1]) > 4 and int(xdata[1][0:3]) > 0 and int(xdata[1][0:3]) < 3000:
+        if len(xdata[1]) == 19 and int(xdata[1][0:3]) > 0 and int(xdata[1][0:3]) < 3000:
             #the x-axis data looks like it's a datetime! use datetime template
-            return graphPgTemplate_dateTime
+            return graphPgTemplateStart+graphPgTemplate_dateTime+graphPgTemplateEnd
         else:
             #the x-axis data is a string; process as such
-            return graphPgTemplate_string
+            return graphPgTemplateStart+graphPgTemplate_string+graphPgTemplateEnd
     else:
         #otherwise, data is simply numeric
-        return graphPgTemplate
+        return graphPgTemplateStart+graphPgTemplate_numeric+graphPgTemplateEnd
 
 #helper function to combine data
 def combineData(xdata,ydata,xlabel):
     #if ydata is a simple vector, encapsulate it into a 2D list
     if type(ydata[1]) is int:
         ydata = [[val] for val in ydata]
+
+    #if xdata is time data, add HH:MM:SS if it is missing (just 00:00:00)
+    if type(xdata[1]) is str:
+        #check if first 4 characters of xdata is a valid year
+        if len(xdata[1]) == 10 and int(xdata[1][0:3]) > 0 and int(xdata[1][0:3]) < 3000:
+            xdata[1:] = [val+' 00:00:00' for val in xdata[1:]]
 
     #figure out independent variable headers
     # if there is a title row, use that title

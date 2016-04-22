@@ -17,7 +17,7 @@ fig1.plot([1,2,3,4,5],[8,7,6,5,4])
 
 This will open a webpage in your default browser with the plot. For more examples, see testGraph.py. Examples include scatter plots, adding titles/plot labels, and datetime graphs.
 
-For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-dd HH:MM:SS'. GooPyCharts will take care of the rest.
+For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-dd HH:MM:SS'. The 'HH:MM:SS' is optional, but be consistent throughout your input. GooPyCharts will take care of the rest.
 
 ## Features
 - line and scatter plots
