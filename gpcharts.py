@@ -149,6 +149,32 @@ graphPgTemplate_dateTime = """
         }
 """
 
+graphPgTemplate_hist = """
+        var options = {
+            width: width,
+            height: height,
+            title: grTitle,
+            titleTextStyle: { fontSize: 18, bold: true },
+            hAxis: { title: dataArr[0]},
+            vAxis: { title: '%s' },
+            %s
+        };
+
+        var data = new google.visualization.DataTable();
+        var csvOut = "data:text/csv;charset=utf-8";
+        // Add column header
+        data.addColumn('number',dataArr[0]);
+        csvOut += ',' + dataArr[0];
+        csvOut += '\\n';
+
+        // Add data
+        for (var i = 1; i < dataArr.length; i++)
+        {
+            data.addRow([dataArr[i]]);
+            csvOut += dataArr[i].toString()+'\\n';
+        }
+"""
+
 graphPgTemplateEnd = """
         var chart = new google.visualization.%s(document.getElementById('chart_div'));
 
@@ -264,6 +290,34 @@ class figure:
       #input argument format to template is: data, title, y label, trendline/additional options, chart type
       f.write(templateType(xdata) % 
               (str(data),self.title,self.height,self.width,self.ylabel,trendLineStr,'ScatterChart'))
+      f.close()
+
+      webbrowser.open_new(self.fname)
+   
+   #bar chart
+   def bar(self,xdata,ydata):
+      f = open(self.fname,'w')
+    
+      #combine data into proper format
+      data = combineData(xdata,ydata,self.xlabel)
+
+      #input argument format to template is: data, title, y label, trendline/additional options, chart type
+      f.write(templateType(xdata) % 
+              (str(data),self.title,self.height,self.width,self.ylabel,'','BarChart'))
+      f.close()
+
+      webbrowser.open_new(self.fname)
+
+   #histogram
+   def hist(self,xdata):
+      f = open(self.fname,'w')
+    
+      #combine data into proper format
+      data = [self.xlabel]+xdata
+
+      #input argument format to template is: data, title, y label, trendline/additional options, chart type
+      f.write((graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % 
+              (str(data),self.title,self.height,self.width,self.ylabel,'','Histogram'))
       f.close()
 
       webbrowser.open_new(self.fname)
