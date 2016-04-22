@@ -19,6 +19,6 @@ xVals = ['Dates','2016-03-20 00:00:00','2016-03-21 00:00:00','2016-03-25 00:00:0
 yVals = [['Shakuras','Korhal','Aiur'],[10,30,40],[12,28,41],[15,34,38],[8,33,47]]
 fig3.plot(xVals,yVals)
 
-#a simple scatter plot
+#a simple scatter plot. Putting in trend line, only supported for first y variable for now.
 fig4 = figure('Strong Correlation')
-fig4.scatter([1,2,3,4,5],[[1,5],[2,4],[3,3],[4,2],[5,1]])
+fig4.scatter([1,2,3,4,5],[[1,5],[2,4],[3,3],[4,2],[5,1]],trendline=True)
