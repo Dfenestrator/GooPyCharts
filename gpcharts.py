@@ -211,6 +211,22 @@ graphPgTemplate_dateTime = """
 </html>
 """
 
+#helper function to determine template type
+def templateType(xdata):
+    #check if x axis is numeric, string, or datetime
+    if type(xdata[1]) is str:
+        #check if first 4 characters of xdata is a valid year
+        if len(xdata[1]) > 4 and int(xdata[1][0:3]) > 0 and int(xdata[1][0:3]) < 3000:
+            #the x-axis data looks like it's a datetime! use datetime template
+            return graphPgTemplate_dateTime
+        else:
+            #the x-axis data is a string; process as such
+            return graphPgTemplate_string
+    else:
+        #otherwise, data is simply numeric
+        return graphPgTemplate
+
+
 ##main class
 class figure:
    numFigs = 1
@@ -256,20 +272,7 @@ class figure:
             data.append([xdata[i]]+ydata[i])
 
       #input argument format to template is: data, title, y label, trendline/additional options, chart type
-
-      #check if x axis is numeric, string, or datetime
-      if type(xdata[1]) is str:
-         #check if first 4 characters of xdata is a valid year
-         if len(xdata[1]) > 4 and int(xdata[1][0:3]) > 0 and int(xdata[1][0:3]) < 3000:
-            #the x-axis data looks like it's a datetime! use datetime template
-            f.write(graphPgTemplate_dateTime % (str(data),self.title,self.ylabel,'','LineChart'))
-         else:
-            #the x-axis data is a string; process as such
-            f.write(graphPgTemplate_string % (str(data),self.title,self.ylabel,'','LineChart'))
-      else:
-         #otherwise, data is simply numeric
-         f.write(graphPgTemplate % (str(data),self.title,self.ylabel,'','LineChart'))
-
+      f.write(templateType(xdata) % (str(data),self.title,self.ylabel,'','LineChart'))
       f.close()
 
       webbrowser.open_new(self.fname)
@@ -305,7 +308,7 @@ class figure:
          trendLineStr = ''
 
       #input argument format to template is: data, title, y label, trendline/additional options, chart type
-      f.write(graphPgTemplate % (str(data),self.title,self.ylabel,trendLineStr,'ScatterChart'))
+      f.write(templateType(xdata) % (str(data),self.title,self.ylabel,trendLineStr,'ScatterChart'))
       f.close()
 
       webbrowser.open_new(self.fname)
