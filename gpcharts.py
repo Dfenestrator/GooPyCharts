@@ -7,6 +7,7 @@
 
 import webbrowser
 
+#The webpage templates. One each for numeric, datetime, and string as the independent variable.
 graphPgTemplate = """
 <html>
 <head>
