@@ -27,6 +27,7 @@ For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-
 - save figure as HTML or PNG
 - save data to CSV
 - zooming (click and drag to zoom, right-click to reset zoom)
+- log scale for y-axis
 - automatic datetime/string/numeric detection on x-axis input (a huge pain point in both MATLAB and matplotlib)
 - Easy webpage integration (just copy and paste the HTML/Javascript from the output HTML file)
 
