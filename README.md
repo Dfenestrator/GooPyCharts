@@ -34,7 +34,7 @@ For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-
 ## Some Rules
 - Headers are column titles. The dependent variable header will be the title of the x axis, and the other headers will appear in the legend.
 - If you have headers on your dependent variables, make sure to also have a header on the independent variable.
-- The header on the x axis will supercede the x label. This is not true for the y label.
+- The header on the x axis will overwrite the x label. The y label is independent and is not assigned any header.
 
 ## Comparisons to Matplotlib and MATLAB
 See the readme's compareToMatplotlib.md and compareToMatlab.md.
