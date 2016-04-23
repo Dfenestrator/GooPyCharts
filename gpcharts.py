@@ -20,8 +20,19 @@ graphPgTemplateStart = """
     function drawChart() {
         var dataArr = %s;
         var grTitle = '%s';
-        var width = %d;
         var height = %d;
+        var width = %d;
+        var logScaleFlag = %s;
+        var vAxisTitle = '%s';
+        var vAxisOpt;
+        if(logScaleFlag)
+        {
+            vAxisOpt = { title: vAxisTitle, logScale: true, format: 'scientific'};
+        }
+        else
+        {
+            vAxisOpt = { title: vAxisTitle };
+        }
 """
 
 graphPgTemplate_numeric = """
@@ -33,7 +44,7 @@ graphPgTemplate_numeric = """
             title: grTitle,
             titleTextStyle: { fontSize: 18, bold: true },
             hAxis: { title: dataArr[0][0] },
-            vAxis: { title: '%s' },
+            vAxis: vAxisOpt,
             %s
         };
 
@@ -64,7 +75,7 @@ graphPgTemplate_string = """
             title: grTitle,
             titleTextStyle: { fontSize: 18, bold: true },
             hAxis: { title: dataArr[0][0] },
-            vAxis: { title: '%s' },
+            vAxis: vAxisOpt,
             %s
         };
 
@@ -114,7 +125,7 @@ graphPgTemplate_dateTime = """
                   }
                },
             },
-            vAxis: { title: '%s' },
+            vAxis: vAxisOpt,
             %s
          };
 
@@ -156,7 +167,7 @@ graphPgTemplate_hist = """
             title: grTitle,
             titleTextStyle: { fontSize: 18, bold: true },
             hAxis: { title: dataArr[0]},
-            vAxis: { title: '%s' },
+            vAxis: vAxisOpt,
             %s
         };
 
@@ -241,7 +252,7 @@ def combineData(xdata,ydata,xlabel):
 class figure:
    numFigs = 1
 
-   def __init__(self,title="Fig",xlabel='',ylabel='',height=1000,width=600):
+   def __init__(self,title="Fig",xlabel='',ylabel='',height=600,width=1000):
       #set figure number, and increment for each instance
       self.figNum = figure.numFigs
       figure.numFigs = figure.numFigs + 1
@@ -261,15 +272,21 @@ class figure:
       self.width = width
 
    #typical line chart plot
-   def plot(self,xdata,ydata):
+   def plot(self,xdata,ydata,logScale=False):
       f = open(self.fname,'w')
     
       #combine data into proper format
       data = combineData(xdata,ydata,self.xlabel)
 
+      #determine log scale parameter
+      if logScale:
+          logScaleStr = 'true'
+      else:
+          logScaleStr = 'false'
+
       #input argument format to template is: data, title, y label, trendline/additional options, chart type
       f.write(templateType(xdata) % 
-              (str(data),self.title,self.height,self.width,self.ylabel,'','LineChart'))
+              (str(data),self.title,self.height,self.width,logScaleStr,self.ylabel,'','LineChart'))
       f.close()
 
       webbrowser.open_new(self.fname)
@@ -289,7 +306,7 @@ class figure:
 
       #input argument format to template is: data, title, y label, trendline/additional options, chart type
       f.write(templateType(xdata) % 
-              (str(data),self.title,self.height,self.width,self.ylabel,trendLineStr,'ScatterChart'))
+              (str(data),self.title,self.height,self.width,'false',self.ylabel,trendLineStr,'ScatterChart'))
       f.close()
 
       webbrowser.open_new(self.fname)
@@ -303,7 +320,7 @@ class figure:
 
       #input argument format to template is: data, title, y label, trendline/additional options, chart type
       f.write(templateType(xdata) % 
-              (str(data),self.title,self.height,self.width,self.ylabel,'','BarChart'))
+              (str(data),self.title,self.height,self.width,'false',self.ylabel,'','BarChart'))
       f.close()
 
       webbrowser.open_new(self.fname)
@@ -317,7 +334,7 @@ class figure:
 
       #input argument format to template is: data, title, y label, trendline/additional options, chart type
       f.write((graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % 
-              (str(data),self.title,self.height,self.width,self.ylabel,'','Histogram'))
+              (str(data),self.title,self.height,self.width,'false',self.ylabel,'','Histogram'))
       f.close()
 
       webbrowser.open_new(self.fname)
