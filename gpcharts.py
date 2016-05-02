@@ -300,7 +300,7 @@ class figure:
 
       #insert trend line, if flag is set
       if trendline:
-         trendLineStr = 'trendlines: { 0: {} }'
+         trendLineStr = 'trendlines: { 0: {showR2: true, visibleInLegend: true} }'
       else:
          trendLineStr = ''
 
