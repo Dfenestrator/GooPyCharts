@@ -30,6 +30,7 @@ For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-
 - log scale for y-axis
 - automatic datetime/string/numeric detection on x-axis input (a huge pain point in both MATLAB and matplotlib)
 - Easy webpage integration (just copy and paste the HTML/Javascript from the output HTML file)
+- Jupyter notebook integration (use plot_nb, scatter_nb, bar_nb, and hist_nb for plots in notebooks)
 
 ## Some Rules
 - Headers are column titles. The dependent variable header will be the title of the x axis, and the other headers will appear in the legend.
