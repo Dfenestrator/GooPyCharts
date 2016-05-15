@@ -6,6 +6,10 @@
 ##
 
 import webbrowser
+try:
+    from IPython.core.display import display, HTML
+except ImportError:
+    pass
 
 #The webpage templates. One each for numeric, datetime, and string as the independent variable.
 #Compressed the start and end of the template into 1 string to shorten number of lines of code.
@@ -14,7 +18,11 @@ graphPgTemplateStart = """
 <head>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
-    google.charts.load('current', {'packages':['corechart']});
+    if ((typeof google === 'undefined') || (typeof google.visualization === 'undefined')) 
+    {
+       google.charts.load('current', {'packages':['corechart']});
+    }
+    
     google.charts.setOnLoadCallback(drawChart);
 
     function drawChart() {
@@ -272,7 +280,7 @@ class figure:
       self.width = width
 
    #typical line chart plot
-   def plot(self,xdata,ydata,logScale=False):
+   def plot(self,xdata,ydata,logScale=False,nb=False):
       f = open(self.fname,'w')
     
       #combine data into proper format
@@ -289,10 +297,13 @@ class figure:
               (str(data),self.title,self.height,self.width,logScaleStr,self.ylabel,'','LineChart'))
       f.close()
 
-      webbrowser.open_new(self.fname)
+      if nb == False:
+         webbrowser.open_new(self.fname)
+      else:
+         display(HTML(self.fname))
 
    #scatter plot
-   def scatter(self,xdata,ydata,trendline=False):
+   def scatter(self,xdata,ydata,trendline=False,nb=False):
       f = open(self.fname,'w')
 
       #combine data into proper format
@@ -309,10 +320,13 @@ class figure:
               (str(data),self.title,self.height,self.width,'false',self.ylabel,trendLineStr,'ScatterChart'))
       f.close()
 
-      webbrowser.open_new(self.fname)
+      if nb == False:
+         webbrowser.open_new(self.fname)
+      else:
+         display(HTML(self.fname))
    
    #bar chart
-   def bar(self,xdata,ydata):
+   def bar(self,xdata,ydata,nb=False):
       f = open(self.fname,'w')
     
       #combine data into proper format
@@ -323,10 +337,13 @@ class figure:
               (str(data),self.title,self.height,self.width,'false',self.ylabel,'','BarChart'))
       f.close()
 
-      webbrowser.open_new(self.fname)
+      if nb == False:
+         webbrowser.open_new(self.fname)
+      else:
+         display(HTML(self.fname))
 
    #histogram
-   def hist(self,xdata):
+   def hist(self,xdata,nb=False):
       f = open(self.fname,'w')
     
       #combine data into proper format
@@ -337,5 +354,20 @@ class figure:
               (str(data),self.title,self.height,self.width,'false',self.ylabel,'','Histogram'))
       f.close()
 
-      webbrowser.open_new(self.fname)
+      if nb == False:
+         webbrowser.open_new(self.fname)
+      else:
+         display(HTML(self.fname))
+   
+   def plot_nb(self,xdata,ydata,logScale=False):
+        self.plot(xdata,ydata,logScale,nb=True)
+   
+   def scatter_nb(self,xdata,ydata,trendline=False):
+        self.scatter(xdata,ydata,trendline,nb=True)
+        
+   def bar_nb(self,xdata,ydata):
+        self.plot(xdata,ydata,nb=True)
+        
+   def hist_nb(self,xdata):
+        self.plot(xdata,nb=True)        
 
