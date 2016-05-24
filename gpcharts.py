@@ -16,22 +16,24 @@ except ImportError:
 graphPgTemplateStart = """
 <html>
 <head>
-    <script src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
     <script type="text/javascript">
-    if ((typeof google === 'undefined') || (typeof google.visualization === 'undefined')) 
-    {
-       google.charts.load('current', {'packages':['corechart']});
-    }
-    
-    google.charts.setOnLoadCallback(drawChart);
+    $.getScript( "https://www.gstatic.com/charts/loader.js", function() {
+      if ((typeof google === 'undefined') || (typeof google.visualization === 'undefined')) 
+      {
+         google.charts.load('current', {'packages':['corechart']});
+      }
+
+      google.charts.setOnLoadCallback(drawChart);
+    });
     
     function drawChart() {
-        var dataArr = %s;
-        var grTitle = '%s';
-        var height = %d;
-        var width = %d;
-        var logScaleFlag = %s;
-        var vAxisTitle = '%s';
+        var dataArr = %(data)s;
+        var grTitle = '%(title)s';
+        var height = %(height)d;
+        var width = %(width)d;
+        var logScaleFlag = %(logScaleFlag)s;
+        var vAxisTitle = '%(ylabel)s';
         var vAxisOpt;
         if(logScaleFlag)
         {
@@ -53,7 +55,7 @@ graphPgTemplate_numeric = """
             titleTextStyle: { fontSize: 18, bold: true },
             hAxis: { title: dataArr[0][0] },
             vAxis: vAxisOpt,
-            %s
+            %(trendLineStr)s
         };
 
         var data = new google.visualization.DataTable();
@@ -84,7 +86,7 @@ graphPgTemplate_string = """
             titleTextStyle: { fontSize: 18, bold: true },
             hAxis: { title: dataArr[0][0] },
             vAxis: vAxisOpt,
-            %s
+            %(trendLineStr)s
         };
 
         var data = new google.visualization.DataTable();
@@ -134,7 +136,7 @@ graphPgTemplate_dateTime = """
                },
             },
             vAxis: vAxisOpt,
-            %s
+            %(trendLineStr)s
          };
 
          var data = new google.visualization.DataTable();
@@ -195,18 +197,18 @@ graphPgTemplate_hist = """
 """
 
 graphPgTemplateEnd = """
-        var chart = new google.visualization.%s(document.getElementById('chart_div_%d'));
+        var chart = new google.visualization.%(plotType)s(document.getElementById('chart_div_%(numFig)d'));
 
         chart.draw(data, options);
-        document.getElementById('pic_div_%d').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
-        document.getElementById('csvFileDl_%d').innerHTML = '<a href="' + encodeURI(csvOut) + '" download="'+grTitle+'.csv">Download CSV</a>'
+        document.getElementById('pic_div_%(numFig)d').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
+        document.getElementById('csvFileDl_%(numFig)d').innerHTML = '<a href="' + encodeURI(csvOut) + '" download="'+grTitle+'.csv">Download CSV</a>'
     }
     </script>
 </head>
 <body>
-    <div id="chart_div_%d"></div>
-    <div id="pic_div_%d"></div>
-    <div id="csvFileDl_%d"></div>
+    <div id="chart_div_%(numFig)d"></div>
+    <div id="pic_div_%(numFig)d"></div>
+    <div id="csvFileDl_%(numFig)d"></div>
 </body>
 </html>
 """
@@ -258,12 +260,12 @@ def combineData(xdata,ydata,xlabel):
 
 ##main class
 class figure:
-   numFigs = 1
+   numFig = 1
 
    def __init__(self,title="Fig",xlabel='',ylabel='',height=600,width=1000):
       #set figure number, and increment for each instance
-      self.figNum = figure.numFigs
-      figure.numFigs = figure.numFigs + 1
+      self.figNum = figure.numFig
+      figure.numFig = figure.numFig + 1
 
       #if title has not been changed, add figure number
       if title=="Fig":
@@ -292,9 +294,18 @@ class figure:
       else:
           logScaleStr = 'false'
 
-      #input argument format to template is: data, title, y label, trendline/additional options, chart type
-      f.write(templateType(xdata) % 
-              (str(data),self.title,self.height,self.width,logScaleStr,self.ylabel,'','LineChart',self.numFigs,self.numFigs,self.numFigs,self.numFigs,self.numFigs,self.numFigs))
+      #input argument format to template is in dictionary format (see template for where variables are inserted)
+      argDict = {'data': str(data),
+                 'title': self.title,
+                 'height': self.height,
+                 'width': self.width,
+                 'logScaleFlag': 'false',
+                 'ylabel': self.ylabel,
+                 'trendLineStr': '',
+                 'plotType': 'LineChart',
+                 'numFig': self.numFig}
+
+      f.write(templateType(xdata) % argDict)
       f.close()
 
       if nb == False:
@@ -316,9 +327,18 @@ class figure:
       else:
          trendLineStr = ''
 
-      #input argument format to template is: data, title, y label, trendline/additional options, chart type
-      f.write(templateType(xdata) % 
-              (str(data),self.title,self.height,self.width,'false',self.ylabel,trendLineStr,'ScatterChart'))
+      #input argument format to template is in dictionary format (see template for where variables are inserted)
+      argDict = {'data':str(data),
+                 'title':self.title,
+                 'height':self.height,
+                 'width':self.width,
+                 'logScaleFlag':'false',
+                 'ylabel':self.ylabel,
+                 'trendLineStr':trendLineStr,
+                 'plotType':'ScatterChart',
+                 'numFig':self.numFig}
+
+      f.write(templateType(xdata) % argDict)
       f.close()
 
       if nb == False:
@@ -333,9 +353,17 @@ class figure:
       #combine data into proper format
       data = combineData(xdata,ydata,self.xlabel)
 
-      #input argument format to template is: data, title, y label, trendline/additional options, chart type
-      f.write(templateType(xdata) % 
-              (str(data),self.title,self.height,self.width,'false',self.ylabel,'','BarChart'))
+      #input argument format to template is in dictionary format (see template for where variables are inserted)
+      argDict = {'data':str(data),
+                 'title':self.title,
+                 'height':self.height,
+                 'width':self.width,
+                 'logScaleFlag':'false',
+                 'ylabel':self.ylabel,
+                 'trendLineStr':'',
+                 'plotType':'BarChart',
+                 'numFig':self.numFig}
+      f.write(templateType(xdata) % argDict)
       f.close()
 
       if nb == False:
@@ -350,9 +378,17 @@ class figure:
       #combine data into proper format
       data = [self.xlabel]+xdata
 
-      #input argument format to template is: data, title, y label, trendline/additional options, chart type
-      f.write((graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % 
-              (str(data),self.title,self.height,self.width,'false',self.ylabel,'','Histogram'))
+      #input argument format to template is in dictionary format (see template for where variables are inserted)
+      argDict = {'data':str(data),
+                 'title':self.title,
+                 'height':self.height,
+                 'width':self.width,
+                 'logScaleFlag':'false',
+                 'ylabel':self.ylabel,
+                 'trendLineStr':'',
+                 'plotType':'Histogram',
+                 'numFig':self.numFig}
+      f.write((graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict)
       f.close()
 
       if nb == False:
@@ -367,8 +403,8 @@ class figure:
         self.scatter(xdata,ydata,trendline,nb=True)
         
    def bar_nb(self,xdata,ydata):
-        self.plot(xdata,ydata,nb=True)
+        self.bar(xdata,ydata,nb=True)
         
    def hist_nb(self,xdata):
-        self.plot(xdata,nb=True)        
+        self.hist(xdata,nb=True)        
 
