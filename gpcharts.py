@@ -178,7 +178,7 @@ graphPgTemplate_hist = """
             titleTextStyle: { fontSize: 18, bold: true },
             hAxis: { title: dataArr[0]},
             vAxis: vAxisOpt,
-            %s
+            %(trendLineStr)s
         };
 
         var data = new google.visualization.DataTable();
@@ -299,7 +299,7 @@ class figure:
                  'title': self.title,
                  'height': self.height,
                  'width': self.width,
-                 'logScaleFlag': 'false',
+                 'logScaleFlag': logScaleStr,
                  'ylabel': self.ylabel,
                  'trendLineStr': '',
                  'plotType': 'LineChart',
