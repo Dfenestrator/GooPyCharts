@@ -7,7 +7,7 @@
 
 import webbrowser
 try:
-    from IPython.core.display import display, HTML
+    from IPython.core.display import display, HTML, display_html, display_javascript
 except ImportError:
     pass
 
@@ -16,7 +16,7 @@ except ImportError:
 graphPgTemplateStart = """
 <html>
 <head>
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://www.gstatic.com/charts/loader.js"></script>
     <script type="text/javascript">
     if ((typeof google === 'undefined') || (typeof google.visualization === 'undefined')) 
     {
@@ -24,7 +24,7 @@ graphPgTemplateStart = """
     }
     
     google.charts.setOnLoadCallback(drawChart);
-
+    
     function drawChart() {
         var dataArr = %s;
         var grTitle = '%s';
@@ -195,18 +195,18 @@ graphPgTemplate_hist = """
 """
 
 graphPgTemplateEnd = """
-        var chart = new google.visualization.%s(document.getElementById('chart_div'));
+        var chart = new google.visualization.%s(document.getElementById('chart_div_%d'));
 
         chart.draw(data, options);
-        document.getElementById('pic_div').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
-        document.getElementById('csvFileDl').innerHTML = '<a href="' + encodeURI(csvOut) + '" download="'+grTitle+'.csv">Download CSV</a>'
+        document.getElementById('pic_div_%d').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
+        document.getElementById('csvFileDl_%d').innerHTML = '<a href="' + encodeURI(csvOut) + '" download="'+grTitle+'.csv">Download CSV</a>'
     }
     </script>
 </head>
 <body>
-    <div id="chart_div"></div>
-    <div id="pic_div"></div>
-    <div id="csvFileDl"></div>
+    <div id="chart_div_%d"></div>
+    <div id="pic_div_%d"></div>
+    <div id="csvFileDl_%d"></div>
 </body>
 </html>
 """
@@ -294,13 +294,14 @@ class figure:
 
       #input argument format to template is: data, title, y label, trendline/additional options, chart type
       f.write(templateType(xdata) % 
-              (str(data),self.title,self.height,self.width,logScaleStr,self.ylabel,'','LineChart'))
+              (str(data),self.title,self.height,self.width,logScaleStr,self.ylabel,'','LineChart',self.numFigs,self.numFigs,self.numFigs,self.numFigs,self.numFigs,self.numFigs))
       f.close()
 
       if nb == False:
          webbrowser.open_new(self.fname)
       else:
          display(HTML(self.fname))
+         
 
    #scatter plot
    def scatter(self,xdata,ydata,trendline=False,nb=False):
