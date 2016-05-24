@@ -10,5 +10,6 @@
 - Works without numpy - just uses Python lists
 
 ## Disadvantages
-- Limited features. Matplotlib has a lot more features and is overall more powerful
+- Limited features. Matplotlib has a lot more features and is overall much more powerful
 - Dynamic graph resizing
+- Performance - Matplotlib handles large amounts of data better
