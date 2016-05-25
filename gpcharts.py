@@ -12,7 +12,7 @@ if python_version == 3:
     try:
         from past.builtins import xrange
     except ImportError:
-        print("past module not installed. Run `pip install future` for Python3 compatibility.")
+        print("past module not installed. Run `pip install future` for GooPyCharts's Python3 compatibility.")
         sys.exit()
 
 # Module's meat begins
