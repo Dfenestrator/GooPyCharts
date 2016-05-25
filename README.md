@@ -1,6 +1,14 @@
 # GooPyCharts
 A Google Charts API for Python 2, meant to be used as an alternative to matplotlib. Syntax is similar to MATLAB. The goal of this project is to make an easy to use graphing utility for the most common graphical use cases.
 
+## Python (Web Browser) Screenshot
+
+![Alt text](testGraphOutput.JPG?raw=true "Python example")
+
+## Jupyter Screenshot
+
+![Alt text](Sample Jupyter graph.png?raw=true "Jupyter example")
+
 ## Installation and use
 GooPyCharts can be installed with pip using the following command:
 
