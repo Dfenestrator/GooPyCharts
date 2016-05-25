@@ -3,13 +3,13 @@ A Google Charts API for Python 2, meant to be used as an alternative to matplotl
 
 ## Python (Web Browser) Screenshot
 
-![Alt text](testGraphOutput.JPG?raw=true "Python example")
+![Alt text](assets/testGraphOutput.JPG?raw=true "Python example")
 
 ## Jupyter Screenshot
 
-![Alt text](Sample Jupyter graph.png?raw=true "Jupyter example")
+![Alt text](assets/Sample Jupyter graph.png?raw=true "Jupyter example")
 
-You can find a Jupyter notebook with examples [here](gpcharts%20test.ipynb). A Python script with examples can be found [here](testGraph.py).
+You can find a Jupyter notebook with examples [here](examples/gpcharts%20test.ipynb). A Python script with examples can be found [here](examples/testGraph.py).
 
 ## Installation and use
 GooPyCharts can be installed with pip using the following command:
@@ -31,7 +31,7 @@ fig1 = figure()
 fig1.plot([1,2,3,4,5],[8,7,6,5,4])
 ```
 
-This will open a webpage in your default browser with the plot. For more examples, see [testGraph.py](testGraph.py). Examples include scatter plots, adding titles/plot labels, and datetime graphs. For simple bar and histogram examples, see [testGraph_barAndHist.py](testGraph_barAndHist.py). For a jupyter notebook example, see [gpcharts test.ipynb](gpcharts%20test.ipynb). The example does not display properly in Github, but the file should work if you download it and then do "Cell->Run All."
+This will open a webpage in your default browser with the plot. For more examples, see [testGraph.py](examples/testGraph.py). Examples include scatter plots, adding titles/plot labels, and datetime graphs. For simple bar and histogram examples, see [testGraph_barAndHist.py](examples/testGraph_barAndHist.py). For a jupyter notebook example, see [gpcharts test.ipynb](examples/gpcharts%20test.ipynb). The example does not display properly in Github, but the file should work if you download it and then do "Cell->Run All."
 
 For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-dd HH:MM:SS'. The 'HH:MM:SS' is optional, but be consistent throughout your input. GooPyCharts will take care of the rest.
 
@@ -55,6 +55,6 @@ For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-
 - If you want to do some fancy math using NumPy and then plot a NumPy array, use the tolist() function to convert the array to a Python list.
 
 ## Comparisons to Matplotlib and MATLAB
-See the readme's compareToMatplotlib.md and compareToMatlab.md.
+See the README's [compareToMatplotlib.md](assets/compareToMatplotlib.md) and [compareToMatlab.md](assets/compareToMatlab.md).
 
 Please report bugs to me and I'll do my best to fix them in short order.
