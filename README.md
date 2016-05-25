@@ -47,7 +47,6 @@ For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-
 - automatic datetime/string/numeric detection on x-axis input (a huge pain point in both MATLAB and matplotlib)
 - Easy webpage integration (just copy and paste the HTML/Javascript from the output HTML file)
 - Jupyter notebook integration (use plot_nb, scatter_nb, bar_nb, and hist_nb for plots in notebooks)
-Note: There is an existing issue where the first plot does not always work in Jupyter because the Google library is not loading properly. If you have issues with this, re-run your code or run the non-notebook version once ("plot" instead of "plot_nb") to load the library. Everything should work in your session after that.
 
 ## Some Rules
 - Headers are column titles. The dependent variable header will be the title of the x axis, and the other headers will appear in the legend.
