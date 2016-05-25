@@ -5,6 +5,17 @@
 # for matplotlib. Syntax is similar to MATLAB figures.
 ##
 
+# Python3 compatibility
+import sys
+python_version = sys.version_info[0]
+if python_version == 3:
+    try:
+        from past.builtins import xrange
+    except ImportError:
+        print("past module not installed. Run `pip install future` for Python3 compatibility.")
+        sys.exit()
+
+# Module's meat begins
 import webbrowser
 try:
     from IPython.core.display import display, HTML, display_html, display_javascript
