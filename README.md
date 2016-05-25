@@ -1,5 +1,5 @@
 # GooPyCharts
-A Google Charts API for Python 2, meant to be used as an alternative to matplotlib. Syntax is similar to MATLAB. The goal of this project is to make an easy to use graphing utility for the most common graphical use cases.
+A Google Charts API for Python 2 and 3, meant to be used as an alternative to matplotlib. Syntax is similar to MATLAB. The goal of this project is to make an easy to use graphing utility for the most common graphical use cases.
 
 ## Python (Web Browser) Screenshot
 
