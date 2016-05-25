@@ -292,6 +292,13 @@ class figure:
       self.height = height
       self.width = width
 
+   #display HTML helper method
+   def dispFile(self,nb):
+      if nb:
+         display(HTML(self.fname))
+      else:
+         webbrowser.open_new(self.fname)
+
    #typical line chart plot
    def plot(self,xdata,ydata,logScale=False,nb=False):
       f = open(self.fname,'w')
@@ -319,11 +326,7 @@ class figure:
       f.write(templateType(xdata) % argDict)
       f.close()
 
-      if nb == False:
-         webbrowser.open_new(self.fname)
-      else:
-         display(HTML(self.fname))
-         
+      self.dispFile(nb)
 
    #scatter plot
    def scatter(self,xdata,ydata,trendline=False,nb=False):
@@ -352,10 +355,7 @@ class figure:
       f.write(templateType(xdata) % argDict)
       f.close()
 
-      if nb == False:
-         webbrowser.open_new(self.fname)
-      else:
-         display(HTML(self.fname))
+      self.dispFile(nb)
    
    #bar chart
    def bar(self,xdata,ydata,nb=False):
@@ -377,10 +377,7 @@ class figure:
       f.write(templateType(xdata) % argDict)
       f.close()
 
-      if nb == False:
-         webbrowser.open_new(self.fname)
-      else:
-         display(HTML(self.fname))
+      self.dispFile(nb)
 
    #histogram
    def hist(self,xdata,nb=False):
@@ -402,11 +399,9 @@ class figure:
       f.write((graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict)
       f.close()
 
-      if nb == False:
-         webbrowser.open_new(self.fname)
-      else:
-         display(HTML(self.fname))
+      self.dispFile(nb)
    
+   #Jupyter plotting methods
    def plot_nb(self,xdata,ydata,logScale=False):
         self.plot(xdata,ydata,logScale,nb=True)
    
