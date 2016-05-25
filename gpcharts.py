@@ -8,7 +8,7 @@
 # Python3 compatibility
 import sys
 python_version = sys.version_info[0]
-if python_version == 3:
+if python_version >= 3:
     try:
         from past.builtins import xrange
     except ImportError:
