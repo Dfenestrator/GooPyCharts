@@ -55,6 +55,6 @@ For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-
 - If you want to do some fancy math using NumPy and then plot a NumPy array, use the tolist() function to convert the array to a Python list.
 
 ## Comparisons to Matplotlib and MATLAB
-See the README's [compareToMatplotlib.md](assets/compareToMatplotlib.md) and [compareToMatlab.md](assets/compareToMatlab.md).
+See the README's [compareToMatplotlib.md](assets/compareToMatplotlib.md) and [compareToMATLAB.md](assets/compareToMATLAB.md).
 
 Please report bugs to me and I'll do my best to fix them in short order.
