@@ -1,7 +1,8 @@
 ##
 # Copyright 2016 Sagnik Ghosh, licensed under the Apache 2.0 License.
 #
-# GooPyCharts: an interface between Python and Google Charts API. Written to serve as a simple substitute
+# GooPyCharts: an interface between Python and Google Charts API. Written to
+# serve as a simple substitute
 # for matplotlib. Syntax is similar to MATLAB figures.
 ##
 
@@ -12,7 +13,8 @@ if python_version >= 3:
     try:
         from past.builtins import xrange
     except ImportError:
-        print("past module not installed. Run `pip install future` for GooPyCharts's Python3 compatibility.")
+        print("past module not installed. Run `pip install future` for \
+                GooPyCharts's Python3 compatibility.")
         sys.exit()
 
 # Module's meat begins
@@ -22,8 +24,10 @@ try:
 except ImportError:
     pass
 
-#The webpage templates. One each for numeric, datetime, and string as the independent variable.
-#Compressed the start and end of the template into 1 string to shorten number of lines of code.
+# The webpage templates. One each for numeric, datetime, and string as the
+# independent variable.
+# Compressed the start and end of the template into 1 string to shorten number
+# of lines of code.
 graphPgTemplateStart = """
 <html>
 <head>
@@ -37,7 +41,7 @@ graphPgTemplateStart = """
 
       google.charts.setOnLoadCallback(drawChart);
     });
-    
+
     function drawChart() {
         var dataArr = %(data)s;
         var grTitle = '%(title)s';
@@ -224,38 +228,40 @@ graphPgTemplateEnd = """
 </html>
 """
 
-#helper function to determine template type
+
+# helper function to determine template type
 def templateType(xdata):
-    #check if x axis is numeric, string, or datetime
+    # check if x axis is numeric, string, or datetime
     if type(xdata[1]) is str:
-        #check if first 4 characters of xdata is a valid year
+        # check if first 4 characters of xdata is a valid year
         if len(xdata[1]) == 19 and int(xdata[1][0:3]) > 0 and int(xdata[1][0:3]) < 3000:
-            #the x-axis data looks like it's a datetime! use datetime template
+            # the x-axis data looks like it's a datetime! use datetime template
             return graphPgTemplateStart+graphPgTemplate_dateTime+graphPgTemplateEnd
         else:
-            #the x-axis data is a string; process as such
+            # the x-axis data is a string; process as such
             return graphPgTemplateStart+graphPgTemplate_string+graphPgTemplateEnd
     else:
-        #otherwise, data is simply numeric
+        # otherwise, data is simply numeric
         return graphPgTemplateStart+graphPgTemplate_numeric+graphPgTemplateEnd
 
-#helper function to combine data
-def combineData(xdata,ydata,xlabel):
-    #if ydata is a simple vector, encapsulate it into a 2D list
+
+# helper function to combine data
+def combineData(xdata, ydata, xlabel):
+    # if ydata is a simple vector, encapsulate it into a 2D list
     if type(ydata[1]) is int:
         ydata = [[val] for val in ydata]
 
-    #if xdata is time data, add HH:MM:SS if it is missing (just 00:00:00)
+    # if xdata is time data, add HH:MM:SS if it is missing (just 00:00:00)
     if type(xdata[1]) is str:
-        #check if first 4 characters of xdata is a valid year
+        # check if first 4 characters of xdata is a valid year
         if len(xdata[1]) == 10 and int(xdata[1][0:3]) > 0 and int(xdata[1][0:3]) < 3000:
             xdata[1:] = [val+' 00:00:00' for val in xdata[1:]]
 
-    #figure out independent variable headers
+    # figure out independent variable headers
     # if there is a title row, use that title
     if type(ydata[0][0]) is str:
         data = [[xdata[0]] + ydata[0]]
-        for i in xrange(1,len(xdata)):
+        for i in xrange(1, len(xdata)):
             data.append([xdata[i]]+ydata[i])
     # otherwise, use a default labeling
     else:
@@ -266,151 +272,164 @@ def combineData(xdata,ydata,xlabel):
         data = [header]
         for i in xrange(len(xdata)):
             data.append([xdata[i]]+ydata[i])
-    
+
     return data
 
-##main class
+
+# main class
 class figure:
-   numFig = 1
+    numFig = 1
 
-   def __init__(self,title="Fig",xlabel='',ylabel='',height=600,width=1000):
-      #set figure number, and increment for each instance
-      self.figNum = figure.numFig
-      figure.numFig = figure.numFig + 1
+    def __init__(
+            self,
+            title="Fig",
+            xlabel='',
+            ylabel='',
+            height=600,
+            width=1000):
+        # set figure number, and increment for each instance
+        self.figNum = figure.numFig
+        figure.numFig = figure.numFig + 1
 
-      #if title has not been changed, add figure number
-      if title=="Fig":
-         self.title = title+str(self.figNum)
-      else:
-         self.title = title
+        # if title has not been changed, add figure number
+        if title == "Fig":
+            self.title = title+str(self.figNum)
+        else:
+            self.title = title
 
-      self.fname = self.title+'.html'
+        self.fname = self.title+'.html'
 
-      self.xlabel = xlabel
-      self.ylabel = ylabel
-      #for sizing plot
-      self.height = height
-      self.width = width
+        self.xlabel = xlabel
+        self.ylabel = ylabel
+        # for sizing plot
+        self.height = height
+        self.width = width
 
-   #display HTML helper method
-   def dispFile(self,nb):
-      if nb:
-         display(HTML(self.fname))
-      else:
-         webbrowser.open_new(self.fname)
+    # display HTML helper method
+    def dispFile(self, nb):
+        if nb:
+            display(HTML(self.fname))
+        else:
+            webbrowser.open_new(self.fname)
 
-   #typical line chart plot
-   def plot(self,xdata,ydata,logScale=False,nb=False):
-      f = open(self.fname,'w')
-    
-      #combine data into proper format
-      data = combineData(xdata,ydata,self.xlabel)
+    # typical line chart plot
+    def plot(self, xdata, ydata, logScale=False, nb=False):
+        f = open(self.fname, 'w')
 
-      #determine log scale parameter
-      if logScale:
-          logScaleStr = 'true'
-      else:
-          logScaleStr = 'false'
+        # combine data into proper format
+        data = combineData(xdata, ydata, self.xlabel)
 
-      #input argument format to template is in dictionary format (see template for where variables are inserted)
-      argDict = {'data': str(data),
-                 'title': self.title,
-                 'height': self.height,
-                 'width': self.width,
-                 'logScaleFlag': logScaleStr,
-                 'ylabel': self.ylabel,
-                 'trendLineStr': '',
-                 'plotType': 'LineChart',
-                 'numFig': self.numFig}
+        # determine log scale parameter
+        if logScale:
+            logScaleStr = 'true'
+        else:
+            logScaleStr = 'false'
 
-      f.write(templateType(xdata) % argDict)
-      f.close()
+        # input argument format to template is in dictionary format (see
+        # template for where variables are inserted)
+        argDict = {'data': str(data),
+                   'title': self.title,
+                   'height': self.height,
+                   'width': self.width,
+                   'logScaleFlag': logScaleStr,
+                   'ylabel': self.ylabel,
+                   'trendLineStr': '',
+                   'plotType': 'LineChart',
+                   'numFig': self.numFig}
 
-      self.dispFile(nb)
+        f.write(templateType(xdata) % argDict)
+        f.close()
 
-   #scatter plot
-   def scatter(self,xdata,ydata,trendline=False,nb=False):
-      f = open(self.fname,'w')
+        self.dispFile(nb)
 
-      #combine data into proper format
-      data = combineData(xdata,ydata,self.xlabel)
+    # scatter plot
+    def scatter(self, xdata, ydata, trendline=False, nb=False):
+        f = open(self.fname, 'w')
 
-      #insert trend line, if flag is set
-      if trendline:
-         trendLineStr = 'trendlines: { 0: {showR2: true, visibleInLegend: true} }'
-      else:
-         trendLineStr = ''
+        # combine data into proper format
+        data = combineData(xdata, ydata, self.xlabel)
 
-      #input argument format to template is in dictionary format (see template for where variables are inserted)
-      argDict = {'data':str(data),
-                 'title':self.title,
-                 'height':self.height,
-                 'width':self.width,
-                 'logScaleFlag':'false',
-                 'ylabel':self.ylabel,
-                 'trendLineStr':trendLineStr,
-                 'plotType':'ScatterChart',
-                 'numFig':self.numFig}
+        # insert trend line, if flag is set
+        if trendline:
+            trendLineStr = 'trendlines: { 0: {showR2: true, visibleInLegend: true} }'
+        else:
+            trendLineStr = ''
 
-      f.write(templateType(xdata) % argDict)
-      f.close()
+        # input argument format to template is in dictionary format (see
+        # template for where variables are inserted)
+        argDict = {'data': str(data),
+                   'title': self.title,
+                   'height': self.height,
+                   'width': self.width,
+                   'logScaleFlag': 'false',
+                   'ylabel': self.ylabel,
+                   'trendLineStr': trendLineStr,
+                   'plotType': 'ScatterChart',
+                   'numFig': self.numFig}
 
-      self.dispFile(nb)
-   
-   #bar chart
-   def bar(self,xdata,ydata,nb=False):
-      f = open(self.fname,'w')
-    
-      #combine data into proper format
-      data = combineData(xdata,ydata,self.xlabel)
+        f.write(templateType(xdata) % argDict)
+        f.close()
 
-      #input argument format to template is in dictionary format (see template for where variables are inserted)
-      argDict = {'data':str(data),
-                 'title':self.title,
-                 'height':self.height,
-                 'width':self.width,
-                 'logScaleFlag':'false',
-                 'ylabel':self.ylabel,
-                 'trendLineStr':'',
-                 'plotType':'BarChart',
-                 'numFig':self.numFig}
-      f.write(templateType(xdata) % argDict)
-      f.close()
+        self.dispFile(nb)
 
-      self.dispFile(nb)
+    # bar chart
+    def bar(self, xdata, ydata, nb=False):
+        f = open(self.fname, 'w')
 
-   #histogram
-   def hist(self,xdata,nb=False):
-      f = open(self.fname,'w')
-    
-      #combine data into proper format
-      data = [self.xlabel]+xdata
+        # combine data into proper format
+        data = combineData(xdata, ydata, self.xlabel)
 
-      #input argument format to template is in dictionary format (see template for where variables are inserted)
-      argDict = {'data':str(data),
-                 'title':self.title,
-                 'height':self.height,
-                 'width':self.width,
-                 'logScaleFlag':'false',
-                 'ylabel':self.ylabel,
-                 'trendLineStr':'',
-                 'plotType':'Histogram',
-                 'numFig':self.numFig}
-      f.write((graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict)
-      f.close()
+        # input argument format to template is in dictionary format (see
+        # template for where variables are inserted)
+        argDict = {'data': str(data),
+                   'title': self.title,
+                   'height': self.height,
+                   'width': self.width,
+                   'logScaleFlag': 'false',
+                   'ylabel': self.ylabel,
+                   'trendLineStr': '',
+                   'plotType': 'BarChart',
+                   'numFig': self.numFig}
+        f.write(templateType(xdata) % argDict)
+        f.close()
 
-      self.dispFile(nb)
-   
-   #Jupyter plotting methods
-   def plot_nb(self,xdata,ydata,logScale=False):
-        self.plot(xdata,ydata,logScale,nb=True)
-   
-   def scatter_nb(self,xdata,ydata,trendline=False):
-        self.scatter(xdata,ydata,trendline,nb=True)
-        
-   def bar_nb(self,xdata,ydata):
-        self.bar(xdata,ydata,nb=True)
-        
-   def hist_nb(self,xdata):
-        self.hist(xdata,nb=True)        
+        self.dispFile(nb)
 
+    # histogram
+    def hist(self, xdata, nb=False):
+        f = open(self.fname, 'w')
+
+        # combine data into proper format
+        data = [self.xlabel]+xdata
+
+        # input argument format to template is in dictionary format (see
+        # template for where variables are inserted)
+        argDict = {'data': str(data),
+                   'title': self.title,
+                   'height': self.height,
+                   'width': self.width,
+                   'logScaleFlag': 'false',
+                   'ylabel': self.ylabel,
+                   'trendLineStr': '',
+                   'plotType': 'Histogram',
+                   'numFig': self.numFig}
+        f.write(
+            (graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) %
+            argDict
+        )
+        f.close()
+
+        self.dispFile(nb)
+
+    # Jupyter plotting methods
+    def plot_nb(self, xdata, ydata, logScale=False):
+        self.plot(xdata, ydata, logScale, nb=True)
+
+    def scatter_nb(self, xdata, ydata, trendline=False):
+        self.scatter(xdata, ydata, trendline, nb=True)
+
+    def bar_nb(self, xdata, ydata):
+        self.bar(xdata, ydata, nb=True)
+
+    def hist_nb(self, xdata):
+        self.hist(xdata, nb=True)
