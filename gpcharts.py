@@ -433,17 +433,17 @@ class figure:
     #Jupyter plotting methods
     def plot_nb(self,xdata,ydata,logScale=False):
         '''Graphs a line plot and embeds it in a Jupyter notebook. See 'help(figure.plot)' for more info.'''
-            self.plot(xdata,ydata,logScale,nb=True)
+        self.plot(xdata,ydata,logScale,nb=True)
     
     def scatter_nb(self,xdata,ydata,trendline=False):
         '''Graphs a scatter plot and embeds it in a Jupyter notebook. See 'help(figure.scatter)' for more info.'''
-            self.scatter(xdata,ydata,trendline,nb=True)
+        self.scatter(xdata,ydata,trendline,nb=True)
             
     def bar_nb(self,xdata,ydata):
         '''Displays a bar graph and embeds it in a Jupyter notebook. See 'help(figure.bar)' for more info.'''
-            self.bar(xdata,ydata,nb=True)
+        self.bar(xdata,ydata,nb=True)
             
     def hist_nb(self,xdata):
         '''Graphs a histogram and embeds it in a Jupyter notebook. See 'help(figure.hist)' for more info.'''
-            self.hist(xdata,nb=True)        
+        self.hist(xdata,nb=True)        
 
