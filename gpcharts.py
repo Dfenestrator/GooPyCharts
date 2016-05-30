@@ -271,146 +271,179 @@ def combineData(xdata,ydata,xlabel):
 
 ##main class
 class figure:
-   numFig = 1
+    '''GooPyCharts: a simple plotting tool for Python/Jupyter. See https://github.com/Dfenestrator/GooPyCharts for overview and examples.'''
 
-   def __init__(self,title="Fig",xlabel='',ylabel='',height=600,width=1000):
-      #set figure number, and increment for each instance
-      self.figNum = figure.numFig
-      figure.numFig = figure.numFig + 1
+    numFig = 1
 
-      #if title has not been changed, add figure number
-      if title=="Fig":
-         self.title = title+str(self.figNum)
-      else:
-         self.title = title
+    def __init__(self,title="Fig",xlabel='',ylabel='',height=600,width=1000):
+        #set figure number, and increment for each instance
+        self.figNum = figure.numFig
+        figure.numFig = figure.numFig + 1
 
-      self.fname = self.title+'.html'
+        #if title has not been changed, add figure number
+        if title=="Fig":
+            self.title = title+str(self.figNum)
+        else:
+            self.title = title
 
-      self.xlabel = xlabel
-      self.ylabel = ylabel
-      #for sizing plot
-      self.height = height
-      self.width = width
+        self.fname = self.title+'.html'
 
-   #display HTML helper method
-   def dispFile(self,nb):
-      if nb:
-         display(HTML(self.fname))
-      else:
-         webbrowser.open_new(self.fname)
+        self.xlabel = xlabel
+        self.ylabel = ylabel
+        #for sizing plot
+        self.height = height
+        self.width = width
 
-   #typical line chart plot
-   def plot(self,xdata,ydata,logScale=False,nb=False):
-      f = open(self.fname,'w')
-    
-      #combine data into proper format
-      data = combineData(xdata,ydata,self.xlabel)
+    #display HTML helper method
+    def dispFile(self,nb):
+        if nb:
+            display(HTML(self.fname))
+        else:
+            webbrowser.open_new(self.fname)
 
-      #determine log scale parameter
-      if logScale:
-          logScaleStr = 'true'
-      else:
-          logScaleStr = 'false'
-
-      #input argument format to template is in dictionary format (see template for where variables are inserted)
-      argDict = {'data': str(data),
-                 'title': self.title,
-                 'height': self.height,
-                 'width': self.width,
-                 'logScaleFlag': logScaleStr,
-                 'ylabel': self.ylabel,
-                 'trendLineStr': '',
-                 'plotType': 'LineChart',
-                 'numFig': self.numFig}
-
-      f.write(templateType(xdata) % argDict)
-      f.close()
-
-      self.dispFile(nb)
-
-   #scatter plot
-   def scatter(self,xdata,ydata,trendline=False,nb=False):
-      f = open(self.fname,'w')
-
-      #combine data into proper format
-      data = combineData(xdata,ydata,self.xlabel)
-
-      #insert trend line, if flag is set
-      if trendline:
-         trendLineStr = 'trendlines: { 0: {showR2: true, visibleInLegend: true} }'
-      else:
-         trendLineStr = ''
-
-      #input argument format to template is in dictionary format (see template for where variables are inserted)
-      argDict = {'data':str(data),
-                 'title':self.title,
-                 'height':self.height,
-                 'width':self.width,
-                 'logScaleFlag':'false',
-                 'ylabel':self.ylabel,
-                 'trendLineStr':trendLineStr,
-                 'plotType':'ScatterChart',
-                 'numFig':self.numFig}
-
-      f.write(templateType(xdata) % argDict)
-      f.close()
-
-      self.dispFile(nb)
-   
-   #bar chart
-   def bar(self,xdata,ydata,nb=False):
-      f = open(self.fname,'w')
-    
-      #combine data into proper format
-      data = combineData(xdata,ydata,self.xlabel)
-
-      #input argument format to template is in dictionary format (see template for where variables are inserted)
-      argDict = {'data':str(data),
-                 'title':self.title,
-                 'height':self.height,
-                 'width':self.width,
-                 'logScaleFlag':'false',
-                 'ylabel':self.ylabel,
-                 'trendLineStr':'',
-                 'plotType':'BarChart',
-                 'numFig':self.numFig}
-      f.write(templateType(xdata) % argDict)
-      f.close()
-
-      self.dispFile(nb)
-
-   #histogram
-   def hist(self,xdata,nb=False):
-      f = open(self.fname,'w')
-    
-      #combine data into proper format
-      data = [self.xlabel]+xdata
-
-      #input argument format to template is in dictionary format (see template for where variables are inserted)
-      argDict = {'data':str(data),
-                 'title':self.title,
-                 'height':self.height,
-                 'width':self.width,
-                 'logScaleFlag':'false',
-                 'ylabel':self.ylabel,
-                 'trendLineStr':'',
-                 'plotType':'Histogram',
-                 'numFig':self.numFig}
-      f.write((graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict)
-      f.close()
-
-      self.dispFile(nb)
-   
-   #Jupyter plotting methods
-   def plot_nb(self,xdata,ydata,logScale=False):
-        self.plot(xdata,ydata,logScale,nb=True)
-   
-   def scatter_nb(self,xdata,ydata,trendline=False):
-        self.scatter(xdata,ydata,trendline,nb=True)
+    #typical line chart plot
+    def plot(self,xdata,ydata,logScale=False,nb=False):
+        '''Graphs a line plot.
         
-   def bar_nb(self,xdata,ydata):
-        self.bar(xdata,ydata,nb=True)
+        xdata: list of independent variable data. Can optionally include a header, see testGraph.py in https://github.com/Dfenestrator/GooPyCharts for an example.
+        ydata: list of dependent variable data. Can be multidimensional. If xdata includes a header, include a header list on ydata as well.
+        logScale: set to True to set the y axis to log scale.
+        nb: for embedded plotting in notebooks. Recommended to use 'plot_nb' instead of setting this manually.
+        '''
+
+        f = open(self.fname,'w')
         
-   def hist_nb(self,xdata):
-        self.hist(xdata,nb=True)        
+        #combine data into proper format
+        data = combineData(xdata,ydata,self.xlabel)
+
+        #determine log scale parameter
+        if logScale:
+            logScaleStr = 'true'
+        else:
+            logScaleStr = 'false'
+
+        #input argument format to template is in dictionary format (see template for where variables are inserted)
+        argDict = { 'data': str(data),
+                    'title': self.title,
+                    'height': self.height,
+                    'width': self.width,
+                    'logScaleFlag': logScaleStr,
+                    'ylabel': self.ylabel,
+                    'trendLineStr': '',
+                    'plotType': 'LineChart',
+                    'numFig': self.numFig}
+
+        f.write(templateType(xdata) % argDict)
+        f.close()
+
+        self.dispFile(nb)
+
+    #scatter plot
+    def scatter(self,xdata,ydata,trendline=False,nb=False):
+        '''Graphs a scatter plot.
+        
+        xdata: list of independent variable data. Can optionally include a header, see testGraph.py in https://github.com/Dfenestrator/GooPyCharts for an example.
+        ydata: list of dependent variable data. Can be multidimensional. If xdata includes a header, include a header list on ydata as well.
+        trendline: set to True to plot a linear regression trend line through the first dependend variable.
+        nb: for embedded plotting in notebooks. Recommended to use 'scatter_nb' instead of setting this manually.
+        '''
+
+        f = open(self.fname,'w')
+
+        #combine data into proper format
+        data = combineData(xdata,ydata,self.xlabel)
+
+        #insert trend line, if flag is set
+        if trendline:
+            trendLineStr = 'trendlines: { 0: {showR2: true, visibleInLegend: true} }'
+        else:
+            trendLineStr = ''
+
+        #input argument format to template is in dictionary format (see template for where variables are inserted)
+        argDict = { 'data':str(data),
+                    'title':self.title,
+                    'height':self.height,
+                    'width':self.width,
+                    'logScaleFlag':'false',
+                    'ylabel':self.ylabel,
+                    'trendLineStr':trendLineStr,
+                    'plotType':'ScatterChart',
+                    'numFig':self.numFig}
+
+        f.write(templateType(xdata) % argDict)
+        f.close()
+
+        self.dispFile(nb)
+    
+    #bar chart
+    def bar(self,xdata,ydata,nb=False):
+        '''Displays a bar graph.
+        
+        xdata: list of bar graph categories/bins. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
+        ydata: list of values associated with categories in xdata. If xdata includes a header, include a header list on ydata as well.
+        nb: for embedded plotting in notebooks. Recommended to use 'bar_nb' instead of setting this manually.
+        '''
+        f = open(self.fname,'w')
+        
+        #combine data into proper format
+        data = combineData(xdata,ydata,self.xlabel)
+
+        #input argument format to template is in dictionary format (see template for where variables are inserted)
+        argDict = { 'data':str(data),
+                    'title':self.title,
+                    'height':self.height,
+                    'width':self.width,
+                    'logScaleFlag':'false',
+                    'ylabel':self.ylabel,
+                    'trendLineStr':'',
+                    'plotType':'BarChart',
+                    'numFig':self.numFig}
+        f.write(templateType(xdata) % argDict)
+        f.close()
+
+        self.dispFile(nb)
+
+    #histogram
+    def hist(self,xdata,nb=False):
+        '''Graphs a histogram.
+        
+        xdata: List of values to bin. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
+        nb: for embedded plotting in notebooks. Recommended to use 'hist_nb' instead of setting this manually.
+        '''
+        f = open(self.fname,'w')
+        
+        #combine data into proper format
+        data = [self.xlabel]+xdata
+
+        #input argument format to template is in dictionary format (see template for where variables are inserted)
+        argDict = { 'data':str(data),
+                    'title':self.title,
+                    'height':self.height,
+                    'width':self.width,
+                    'logScaleFlag':'false',
+                    'ylabel':self.ylabel,
+                    'trendLineStr':'',
+                    'plotType':'Histogram',
+                    'numFig':self.numFig}
+        f.write((graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict)
+        f.close()
+
+        self.dispFile(nb)
+    
+    #Jupyter plotting methods
+    def plot_nb(self,xdata,ydata,logScale=False):
+        '''Graphs a line plot and embeds it in a Jupyter notebook. See 'help(figure.plot)' for more info.'''
+            self.plot(xdata,ydata,logScale,nb=True)
+    
+    def scatter_nb(self,xdata,ydata,trendline=False):
+        '''Graphs a scatter plot and embeds it in a Jupyter notebook. See 'help(figure.scatter)' for more info.'''
+            self.scatter(xdata,ydata,trendline,nb=True)
+            
+    def bar_nb(self,xdata,ydata):
+        '''Displays a bar graph and embeds it in a Jupyter notebook. See 'help(figure.bar)' for more info.'''
+            self.bar(xdata,ydata,nb=True)
+            
+    def hist_nb(self,xdata):
+        '''Graphs a histogram and embeds it in a Jupyter notebook. See 'help(figure.hist)' for more info.'''
+            self.hist(xdata,nb=True)        
 
