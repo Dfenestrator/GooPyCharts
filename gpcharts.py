@@ -229,7 +229,7 @@ def templateType(xdata):
     #check if x axis is numeric, string, or datetime
     if type(xdata[1]) is str:
         #check if first 4 characters of xdata is a valid year
-        if len(xdata[1]) == 19 and int(xdata[1][0:3]) > 0 and int(xdata[1][0:3]) < 3000:
+        if len(xdata[1]) == 19 and int(xdata[1][:4]) > 0 and int(xdata[1][:4]) < 3000:
             #the x-axis data looks like it's a datetime! use datetime template
             return graphPgTemplateStart+graphPgTemplate_dateTime+graphPgTemplateEnd
         else:
@@ -242,13 +242,13 @@ def templateType(xdata):
 #helper function to combine data
 def combineData(xdata,ydata,xlabel):
     #if ydata is a simple vector, encapsulate it into a 2D list
-    if type(ydata[1]) is int:
+    if type(ydata[1]) is not list:
         ydata = [[val] for val in ydata]
 
     #if xdata is time data, add HH:MM:SS if it is missing (just 00:00:00)
     if type(xdata[1]) is str:
         #check if first 4 characters of xdata is a valid year
-        if len(xdata[1]) == 10 and int(xdata[1][0:3]) > 0 and int(xdata[1][0:3]) < 3000:
+        if len(xdata[1]) == 10 and int(xdata[1][:4]) > 0 and int(xdata[1][:4]) < 3000:
             xdata[1:] = [val+' 00:00:00' for val in xdata[1:]]
 
     #figure out independent variable headers
@@ -302,7 +302,7 @@ class figure:
             webbrowser.open_new(self.fname)
 
     #typical line chart plot
-    def plot(self,xdata,ydata,logScale=False,nb=False):
+    def plot(self,xdata,ydata=[],logScale=False,nb=False):
         '''Graphs a line plot.
         
         xdata: list of independent variable data. Can optionally include a header, see testGraph.py in https://github.com/Dfenestrator/GooPyCharts for an example.
@@ -314,7 +314,11 @@ class figure:
         f = open(self.fname,'w')
         
         #combine data into proper format
-        data = combineData(xdata,ydata,self.xlabel)
+        #check if only 1 vector was sent, then plot against a count
+        if ydata:
+            data = combineData(xdata,ydata,self.xlabel)
+        else:
+            data = combineData(range(len(xdata)),xdata,self.xlabel)
 
         #determine log scale parameter
         if logScale:
@@ -339,7 +343,7 @@ class figure:
         self.dispFile(nb)
 
     #scatter plot
-    def scatter(self,xdata,ydata,trendline=False,nb=False):
+    def scatter(self,xdata,ydata=[],trendline=False,nb=False):
         '''Graphs a scatter plot.
         
         xdata: list of independent variable data. Can optionally include a header, see testGraph.py in https://github.com/Dfenestrator/GooPyCharts for an example.
@@ -348,10 +352,15 @@ class figure:
         nb: for embedded plotting in notebooks. Recommended to use 'scatter_nb' instead of setting this manually.
         '''
 
+
         f = open(self.fname,'w')
 
         #combine data into proper format
-        data = combineData(xdata,ydata,self.xlabel)
+        #check if only 1 vector was sent, then plot against a count
+        if ydata:
+            data = combineData(xdata,ydata,self.xlabel)
+        else:
+            data = combineData(range(len(xdata)),xdata,self.xlabel)
 
         #insert trend line, if flag is set
         if trendline:
@@ -431,11 +440,11 @@ class figure:
         self.dispFile(nb)
     
     #Jupyter plotting methods
-    def plot_nb(self,xdata,ydata,logScale=False):
+    def plot_nb(self,xdata,ydata=[],logScale=False):
         '''Graphs a line plot and embeds it in a Jupyter notebook. See 'help(figure.plot)' for more info.'''
         self.plot(xdata,ydata,logScale,nb=True)
     
-    def scatter_nb(self,xdata,ydata,trendline=False):
+    def scatter_nb(self,xdata,ydata=[],trendline=False):
         '''Graphs a scatter plot and embeds it in a Jupyter notebook. See 'help(figure.scatter)' for more info.'''
         self.scatter(xdata,ydata,trendline,nb=True)
             
