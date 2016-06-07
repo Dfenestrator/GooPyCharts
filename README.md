@@ -28,7 +28,7 @@ That's it. To get started, you can plot a simple graph with the following code:
 
 ```
 fig1 = figure()
-fig1.plot([1,2,3,4,5],[8,7,6,5,4])
+fig1.plot([8,7,6,5,4])
 ```
 
 This will open a webpage in your default browser with the plot. For more examples, see [testGraph.py](examples/testGraph.py). Examples include scatter plots, adding titles/plot labels, and datetime graphs. For simple bar and histogram examples, see [testGraph_barAndHist.py](examples/testGraph_barAndHist.py). For a jupyter notebook example, see [gpcharts test.ipynb](examples/gpcharts%20test.ipynb). The example does not display properly in Github, but the file should work if you download it and then do "Cell->Run All."
