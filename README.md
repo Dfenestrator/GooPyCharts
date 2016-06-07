@@ -9,7 +9,7 @@ A Google Charts API for Python 2 and 3, meant to be used as an alternative to ma
 
 ![Alt text](assets/Sample Jupyter graph.png?raw=true "Jupyter example")
 
-You can find a Jupyter notebook with examples [here](examples/gpcharts%20test.ipynb). A Python script with examples can be found [here](examples/testGraph.py).
+You can find a Jupyter notebook with examples [here](https://nbviewer.jupyter.org/github/Dfenestrator/GooPyCharts/blob/master/examples/gpcharts%20test.ipynb). A Python script with examples can be found [here](examples/testGraph.py).
 
 ## Installation and use
 GooPyCharts can be installed with pip using the following command:
@@ -31,7 +31,7 @@ fig1 = figure()
 fig1.plot([8,7,6,5,4])
 ```
 
-This will open a webpage in your default browser with the plot. For more examples, see [testGraph.py](examples/testGraph.py). Examples include scatter plots, adding titles/plot labels, and datetime graphs. For simple bar and histogram examples, see [testGraph_barAndHist.py](examples/testGraph_barAndHist.py). For a jupyter notebook example, see [gpcharts test.ipynb](examples/gpcharts%20test.ipynb). The example does not display properly in Github, but the file should work if you download it and then do "Cell->Run All."
+This will open a webpage in your default browser with the plot. For more examples, see [testGraph.py](examples/testGraph.py). Examples include scatter plots, adding titles/plot labels, and datetime graphs. For simple bar and histogram examples, see [testGraph_barAndHist.py](examples/testGraph_barAndHist.py).
 
 For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-dd HH:MM:SS'. The 'HH:MM:SS' is optional, but be consistent throughout your input. GooPyCharts will take care of the rest.
 
