@@ -17,6 +17,7 @@ if python_version >= 3:
 
 # Module's meat begins
 from _templates import * #All the JavaScript graph templates
+from os import path
 import webbrowser
 try:
     from IPython.core.display import display, HTML, display_html, display_javascript
@@ -93,12 +94,34 @@ class figure:
         self.height = height
         self.width = width
 
-    #display HTML helper method
-    def dispFile(self,nb):
-        if nb:
-            display(HTML(self.fname))
-        else:
-            webbrowser.open_new(self.fname)
+        #Set by the chart methods, can be printed out or exported to file.
+        self.javascript = 'No chart created yet. Use a chart method'
+
+    def __str__(self):
+        return self.javascript
+
+    #Write the JavaScript text out to file
+    def write(self):
+        with open(self.fname,'w') as f:
+            f.write(self.javascript)
+
+    #display HTML helper method. Trys nb() first, falls back on wb() if no notebook
+    #the nb parameter has been deprecated and does nothing.
+    def dispFile(self, nb=None):
+        try:
+            self.nb()
+        except:
+            self.wb()
+
+    #Displays in a Jupyter notebook. Writes current data first.
+    def nb(self):
+        self.write()
+        display(HTML(self.fname))
+
+    #Displays in a web browser. Writes current data first.
+    def wb(self):
+        self.write()
+        webbrowser.open_new(self.fname)
 
     #typical line chart plot
     def plot(self,xdata,ydata=[],logScale=False,nb=False):
@@ -109,8 +132,6 @@ class figure:
         logScale: set to True to set the y axis to log scale.
         nb: for embedded plotting in notebooks. Recommended to use 'plot_nb' instead of setting this manually.
         '''
-
-        f = open(self.fname,'w')
         
         #combine data into proper format
         #check if only 1 vector was sent, then plot against a count
@@ -136,11 +157,11 @@ class figure:
                     'plotType': 'LineChart',
                     'numFig': self.numFig}
 
-        f.write(templateType(xdata) % argDict)
-        f.close()
-
-        self.dispFile(nb)
-
+        self.javascript = (templateType(xdata) % argDict)
+        
+        if nb:
+            self.dispFile()
+        
     #scatter plot
     def scatter(self,xdata,ydata=[],trendline=False,nb=False):
         '''Graphs a scatter plot.
@@ -150,9 +171,6 @@ class figure:
         trendline: set to True to plot a linear regression trend line through the first dependend variable.
         nb: for embedded plotting in notebooks. Recommended to use 'scatter_nb' instead of setting this manually.
         '''
-
-
-        f = open(self.fname,'w')
 
         #combine data into proper format
         #check if only 1 vector was sent, then plot against a count
@@ -178,11 +196,11 @@ class figure:
                     'plotType':'ScatterChart',
                     'numFig':self.numFig}
 
-        f.write(templateType(xdata) % argDict)
-        f.close()
+        self.javascript = (templateType(xdata) % argDict)
 
-        self.dispFile(nb)
-    
+        if nb:
+            self.dispFile()
+            
     #bar chart
     def bar(self,xdata,ydata,nb=False):
         '''Displays a bar graph.
@@ -191,8 +209,7 @@ class figure:
         ydata: list of values associated with categories in xdata. If xdata includes a header, include a header list on ydata as well.
         nb: for embedded plotting in notebooks. Recommended to use 'bar_nb' instead of setting this manually.
         '''
-        f = open(self.fname,'w')
-        
+                
         #combine data into proper format
         data = combineData(xdata,ydata,self.xlabel)
 
@@ -206,11 +223,38 @@ class figure:
                     'trendLineStr':'',
                     'plotType':'BarChart',
                     'numFig':self.numFig}
-        f.write(templateType(xdata) % argDict)
-        f.close()
+        self.javascript = (templateType(xdata) % argDict)
+        
+        if nb:
+            self.dispFile()
+        
+    #column chart
+    def column(self,xdata,ydata,nb=False):
+        '''Displays a column graph. A bar chart with vertical bars.
+        
+        xdata: list of column graph categories/bins. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
+        ydata: list of values associated with categories in xdata. If xdata includes a header, include a header list on ydata as well.
+        nb: for embedded plotting in notebooks. Recommended to use 'bar_nb' instead of setting this manually.
+        '''
+                
+        #combine data into proper format
+        data = combineData(xdata,ydata,self.xlabel)
 
-        self.dispFile(nb)
+        #input argument format to template is in dictionary format (see template for where variables are inserted)
+        argDict = { 'data':str(data),
+                    'title':self.title,
+                    'height':self.height,
+                    'width':self.width,
+                    'logScaleFlag':'false',
+                    'ylabel':self.ylabel,
+                    'trendLineStr':'',
+                    'plotType':'ColumnChart',
+                    'numFig':self.numFig}
+        self.javascript = (templateType(xdata) % argDict)
 
+        if nb:
+            self.dispFile()
+        
     #histogram
     def hist(self,xdata,nb=False):
         '''Graphs a histogram.
@@ -218,8 +262,7 @@ class figure:
         xdata: List of values to bin. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         nb: for embedded plotting in notebooks. Recommended to use 'hist_nb' instead of setting this manually.
         '''
-        f = open(self.fname,'w')
-        
+                
         #combine data into proper format
         data = [self.xlabel]+xdata
 
@@ -233,10 +276,10 @@ class figure:
                     'trendLineStr':'',
                     'plotType':'Histogram',
                     'numFig':self.numFig}
-        f.write((graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict)
-        f.close()
+        self.javascript = ((graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict)
 
-        self.dispFile(nb)
+        if nb:
+            self.dispFile()
     
     #Jupyter plotting methods
     def plot_nb(self,xdata,ydata=[],logScale=False):
