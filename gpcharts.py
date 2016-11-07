@@ -18,6 +18,7 @@ if python_version >= 3:
 # Module's meat begins
 from _templates import * #All the JavaScript graph templates
 from os import path
+from warnings import warn
 import webbrowser
 try:
     from IPython.core.display import display, HTML, display_html, display_javascript
@@ -108,9 +109,12 @@ class figure:
     #display HTML helper method. Trys nb() first, falls back on wb() if no notebook
     #the nb parameter has been deprecated and does nothing.
     def dispFile(self, nb=None):
+        if nb is not None:
+            warn('dispFile() nb paraneter is deprecated and does nothing.',
+                    DeprecationWarning)
         try:
             self.nb()
-        except:
+        except NameError:
             self.wb()
 
     #Displays in a Jupyter notebook. Writes current data first.
