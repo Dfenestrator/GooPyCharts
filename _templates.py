@@ -12,10 +12,10 @@ graphPgTemplateStart = """
          google.charts.load('current', {'packages':['corechart']});
       }
 
-      google.charts.setOnLoadCallback(drawChart);
+      google.charts.setOnLoadCallback(drawChart_%(title)s);
     });
     
-    function drawChart_%(title)() {
+    function drawChart_%(title)s() {
         var dataArr = %(data)s;
         var grTitle = '%(title)s';
         var height = %(height)d;

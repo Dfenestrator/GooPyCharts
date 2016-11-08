@@ -101,6 +101,23 @@ class figure:
     def __str__(self):
         return self.javascript
 
+    # Returns the drawFigure function from the JavaScript in its entirety.
+    def get_drawChart(self):
+        tabwidth = 4
+
+        start = self.javascript.find('function drawChart') - tabwidth
+        end = self.javascript.find('</head>') - len('</script>') - 1
+        print(start, end)
+        raw_drawChart = self.javascript[start:end]
+
+        #Unindent 4 spaces on all lines
+        final_drawChart = ''
+        for line in raw_drawChart.split('\n'):
+            final_drawChart += line[tabwidth:] + '\n'
+
+        final_drawChart = final_drawChart.rstrip()
+        return final_drawChart
+
     #Write the JavaScript text out to file
     def write(self):
         with open(self.fname,'w') as f:
