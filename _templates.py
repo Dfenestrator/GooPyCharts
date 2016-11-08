@@ -15,7 +15,7 @@ graphPgTemplateStart = """
       google.charts.setOnLoadCallback(drawChart);
     });
     
-    function drawChart() {
+    function drawChart_%(title)() {
         var dataArr = %(data)s;
         var grTitle = '%(title)s';
         var height = %(height)d;
@@ -185,18 +185,19 @@ graphPgTemplate_hist = """
 """
 
 graphPgTemplateEnd = """
-        var chart = new google.visualization.%(plotType)s(document.getElementById('chart_div_%(numFig)d'));
+        var chart = new
+        google.visualization.%(plotType)s(document.getElementById('chart_div_%(title)s'));
 
         chart.draw(data, options);
-        document.getElementById('pic_div_%(numFig)d').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
-        document.getElementById('csvFileDl_%(numFig)d').innerHTML = '<a href="' + encodeURI(csvOut) + '" download="'+grTitle+'.csv">Download CSV</a>'
+        document.getElementById('pic_div_%(title)s').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
+        document.getElementById('csvFileDl_%(title)s').innerHTML = '<a href="' + encodeURI(csvOut) + '" download="'+grTitle+'.csv">Download CSV</a>'
     }
     </script>
 </head>
 <body>
-    <div id="chart_div_%(numFig)d"></div>
-    <div id="pic_div_%(numFig)d"></div>
-    <div id="csvFileDl_%(numFig)d"></div>
+    <div id="chart_div_%(title)s"></div>
+    <div id="pic_div_%(title)s"></div>
+    <div id="csvFileDl_%(title)s"></div>
 </body>
 </html>
 """
