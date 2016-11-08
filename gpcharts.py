@@ -161,7 +161,7 @@ class figure:
                     'plotType': 'LineChart',
                     'numFig': self.numFig}
 
-        self.javascript = (templateType(xdata) % argDict)
+        self.javascript = templateType(xdata) % argDict
         
         if nb:
             self.dispFile()
@@ -200,7 +200,7 @@ class figure:
                     'plotType':'ScatterChart',
                     'numFig':self.numFig}
 
-        self.javascript = (templateType(xdata) % argDict)
+        self.javascript = templateType(xdata) % argDict
 
         if nb:
             self.dispFile()
@@ -227,7 +227,7 @@ class figure:
                     'trendLineStr':'',
                     'plotType':'BarChart',
                     'numFig':self.numFig}
-        self.javascript = (templateType(xdata) % argDict)
+        self.javascript = templateType(xdata) % argDict
         
         if nb:
             self.dispFile()
@@ -254,7 +254,7 @@ class figure:
                     'trendLineStr':'',
                     'plotType':'ColumnChart',
                     'numFig':self.numFig}
-        self.javascript = (templateType(xdata) % argDict)
+        self.javascript = templateType(xdata) % argDict
 
         if nb:
             self.dispFile()
@@ -280,7 +280,7 @@ class figure:
                     'trendLineStr':'',
                     'plotType':'Histogram',
                     'numFig':self.numFig}
-        self.javascript = ((graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict)
+        self.javascript = (graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict
 
         if nb:
             self.dispFile()
