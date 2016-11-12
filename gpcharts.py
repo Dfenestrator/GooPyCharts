@@ -314,6 +314,10 @@ class figure:
     def bar_nb(self,xdata,ydata):
         '''Displays a bar graph and embeds it in a Jupyter notebook. See 'help(figure.bar)' for more info.'''
         self.bar(xdata,ydata,nb=True)
+
+    def column_nb(self,xdata,ydata):
+        '''Displays a column graph and embeds it in a Jupyter notebook. See 'help(figure.bar)' for more info.'''
+        self.column(xdata,ydata,nb=True)
             
     def hist_nb(self,xdata):
         '''Graphs a histogram and embeds it in a Jupyter notebook. See 'help(figure.hist)' for more info.'''
