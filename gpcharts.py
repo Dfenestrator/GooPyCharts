@@ -20,6 +20,7 @@ from _templates import * #All the JavaScript graph templates
 from os import path
 from warnings import warn
 import webbrowser
+import re
 try:
     from IPython.core.display import display, HTML, display_html, display_javascript
 except ImportError:
@@ -69,6 +70,10 @@ def combineData(xdata,ydata,xlabel):
             data.append([xdata[i]]+ydata[i])
     
     return data
+
+#helper function, returns title as a valid JS identifier, prefixed by '_'.
+def slugify(title):
+    return '_' + re.sub('[^\w\d_]', '_', title) #Make valid JS identifier
 
 ##main class
 class figure:
@@ -174,7 +179,8 @@ class figure:
 
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data': str(data),
-                    'title': self.title,
+                    'title':self.title,
+                    'functionName':slugify(self.title),
                     'height': self.height,
                     'width': self.width,
                     'logScaleFlag': logScaleStr,
@@ -214,6 +220,7 @@ class figure:
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data':str(data),
                     'title':self.title,
+                    'functionName':slugify(self.title),
                     'height':self.height,
                     'width':self.width,
                     'logScaleFlag':'false',
@@ -242,6 +249,7 @@ class figure:
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data':str(data),
                     'title':self.title,
+                    'functionName':slugify(self.title),
                     'height':self.height,
                     'width':self.width,
                     'logScaleFlag':'false',
@@ -269,6 +277,7 @@ class figure:
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data':str(data),
                     'title':self.title,
+                    'functionName':slugify(self.title),
                     'height':self.height,
                     'width':self.width,
                     'logScaleFlag':'false',
@@ -295,6 +304,7 @@ class figure:
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data':str(data),
                     'title':self.title,
+                    'functionName':slugify(self.title),
                     'height':self.height,
                     'width':self.width,
                     'logScaleFlag':'false',

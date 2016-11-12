@@ -12,10 +12,10 @@ graphPgTemplateStart = """
          google.charts.load('current', {'packages':['corechart']});
       }
 
-      google.charts.setOnLoadCallback(drawChart_%(title)s);
+      google.charts.setOnLoadCallback(drawChart%(functionName)s);
     });
     
-    function drawChart_%(title)s() {
+    function drawChart%(functionName)s() {
         var dataArr = %(data)s;
         var grTitle = '%(title)s';
         var height = %(height)d;
@@ -185,19 +185,18 @@ graphPgTemplate_hist = """
 """
 
 graphPgTemplateEnd = """
-        var chart = new
-        google.visualization.%(plotType)s(document.getElementById('chart_div_%(title)s'));
+        var chart = new google.visualization.%(plotType)s(document.getElementById('chart_div%(functionName)s'));
 
         chart.draw(data, options);
-        document.getElementById('pic_div_%(title)s').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
-        document.getElementById('csvFileDl_%(title)s').innerHTML = '<a href="' + encodeURI(csvOut) + '" download="'+grTitle+'.csv">Download CSV</a>'
+        document.getElementById('pic_div%(functionName)s').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
+        document.getElementById('csvFileDl%(functionName)s').innerHTML = '<a href="' + encodeURI(csvOut) + '" download="'+grTitle+'.csv">Download CSV</a>'
     }
     </script>
 </head>
 <body>
-    <div id="chart_div_%(title)s"></div>
-    <div id="pic_div_%(title)s"></div>
-    <div id="csvFileDl_%(title)s"></div>
+    <div id="chart_div%(functionName)s"></div>
+    <div id="pic_div%(functionName)s"></div>
+    <div id="csvFileDl%(functionName)s"></div>
 </body>
 </html>
 """
