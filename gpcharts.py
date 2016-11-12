@@ -98,6 +98,7 @@ class figure:
         #Set by the chart methods, can be printed out or exported to file.
         self.javascript = 'No chart created yet. Use a chart method'
 
+    # Get the full HTML of the file.
     def __str__(self):
         return self.javascript
 
@@ -133,6 +134,10 @@ class figure:
             self.nb()
         except NameError:
             self.wb()
+
+    #Alias for dispFile()
+    def show(self):
+        self.dispFile()
 
     #Displays in a Jupyter notebook. Writes current data first.
     def nb(self):
