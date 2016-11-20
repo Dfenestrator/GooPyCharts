@@ -155,13 +155,13 @@ class figure:
         webbrowser.open_new(self.fname)
 
     #typical line chart plot
-    def plot(self,xdata,ydata=[],logScale=False,nb=False):
+    def plot(self,xdata,ydata=[],logScale=False,disp=True):
         '''Graphs a line plot.
         
         xdata: list of independent variable data. Can optionally include a header, see testGraph.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         ydata: list of dependent variable data. Can be multidimensional. If xdata includes a header, include a header list on ydata as well.
         logScale: set to True to set the y axis to log scale.
-        nb: for embedded plotting in notebooks. Recommended to use 'plot_nb' instead of setting this manually.
+        disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
         '''
         
         #combine data into proper format
@@ -191,17 +191,17 @@ class figure:
 
         self.javascript = templateType(xdata) % argDict
         
-        if nb:
+        if disp:
             self.dispFile()
         
     #scatter plot
-    def scatter(self,xdata,ydata=[],trendline=False,nb=False):
+    def scatter(self,xdata,ydata=[],trendline=False,disp=True):
         '''Graphs a scatter plot.
         
         xdata: list of independent variable data. Can optionally include a header, see testGraph.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         ydata: list of dependent variable data. Can be multidimensional. If xdata includes a header, include a header list on ydata as well.
         trendline: set to True to plot a linear regression trend line through the first dependend variable.
-        nb: for embedded plotting in notebooks. Recommended to use 'scatter_nb' instead of setting this manually.
+        disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
         '''
 
         #combine data into proper format
@@ -231,16 +231,16 @@ class figure:
 
         self.javascript = templateType(xdata) % argDict
 
-        if nb:
+        if disp:
             self.dispFile()
             
     #bar chart
-    def bar(self,xdata,ydata,nb=False):
+    def bar(self,xdata,ydata,disp=True):
         '''Displays a bar graph.
         
         xdata: list of bar graph categories/bins. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         ydata: list of values associated with categories in xdata. If xdata includes a header, include a header list on ydata as well.
-        nb: for embedded plotting in notebooks. Recommended to use 'bar_nb' instead of setting this manually.
+        disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
         '''
                 
         #combine data into proper format
@@ -259,16 +259,16 @@ class figure:
                     'numFig':self.numFig}
         self.javascript = templateType(xdata) % argDict
         
-        if nb:
+        if disp:
             self.dispFile()
         
     #column chart
-    def column(self,xdata,ydata,nb=False):
+    def column(self,xdata,ydata,disp=True):
         '''Displays a column graph. A bar chart with vertical bars.
         
         xdata: list of column graph categories/bins. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         ydata: list of values associated with categories in xdata. If xdata includes a header, include a header list on ydata as well.
-        nb: for embedded plotting in notebooks. Recommended to use 'bar_nb' instead of setting this manually.
+        disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
         '''
                 
         #combine data into proper format
@@ -287,15 +287,15 @@ class figure:
                     'numFig':self.numFig}
         self.javascript = templateType(xdata) % argDict
 
-        if nb:
+        if disp:
             self.dispFile()
         
     #histogram
-    def hist(self,xdata,nb=False):
+    def hist(self,xdata,disp=True):
         '''Graphs a histogram.
         
         xdata: List of values to bin. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
-        nb: for embedded plotting in notebooks. Recommended to use 'hist_nb' instead of setting this manually.
+        disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
         '''
                 
         #combine data into proper format
@@ -314,27 +314,27 @@ class figure:
                     'numFig':self.numFig}
         self.javascript = (graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict
 
-        if nb:
+        if disp:
             self.dispFile()
     
-    #Jupyter plotting methods
+    #Jupyter plotting methods (depricated; keeping for now for backwards compatibility)
     def plot_nb(self,xdata,ydata=[],logScale=False):
         '''Graphs a line plot and embeds it in a Jupyter notebook. See 'help(figure.plot)' for more info.'''
-        self.plot(xdata,ydata,logScale,nb=True)
+        self.plot(xdata,ydata,logScale)
     
     def scatter_nb(self,xdata,ydata=[],trendline=False):
         '''Graphs a scatter plot and embeds it in a Jupyter notebook. See 'help(figure.scatter)' for more info.'''
-        self.scatter(xdata,ydata,trendline,nb=True)
+        self.scatter(xdata,ydata,trendline)
             
     def bar_nb(self,xdata,ydata):
         '''Displays a bar graph and embeds it in a Jupyter notebook. See 'help(figure.bar)' for more info.'''
-        self.bar(xdata,ydata,nb=True)
+        self.bar(xdata,ydata)
 
     def column_nb(self,xdata,ydata):
         '''Displays a column graph and embeds it in a Jupyter notebook. See 'help(figure.bar)' for more info.'''
-        self.column(xdata,ydata,nb=True)
+        self.column(xdata,ydata)
             
     def hist_nb(self,xdata):
         '''Graphs a histogram and embeds it in a Jupyter notebook. See 'help(figure.hist)' for more info.'''
-        self.hist(xdata,nb=True)        
+        self.hist(xdata)        
 
