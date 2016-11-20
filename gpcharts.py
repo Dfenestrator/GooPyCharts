@@ -16,213 +16,15 @@ if python_version >= 3:
         sys.exit()
 
 # Module's meat begins
+from _templates import * #All the JavaScript graph templates
+from os import path
+from warnings import warn
 import webbrowser
+import re
 try:
     from IPython.core.display import display, HTML, display_html, display_javascript
 except ImportError:
     pass
-
-#The webpage templates. One each for numeric, datetime, and string as the independent variable.
-#Compressed the start and end of the template into 1 string to shorten number of lines of code.
-graphPgTemplateStart = """
-<html>
-<head>
-    <script src="https://code.jquery.com/jquery-1.10.2.js"></script>
-    <script type="text/javascript">
-    $.getScript( "https://www.gstatic.com/charts/loader.js", function() {
-      if ((typeof google === 'undefined') || (typeof google.visualization === 'undefined')) 
-      {
-         google.charts.load('current', {'packages':['corechart']});
-      }
-
-      google.charts.setOnLoadCallback(drawChart);
-    });
-    
-    function drawChart() {
-        var dataArr = %(data)s;
-        var grTitle = '%(title)s';
-        var height = %(height)d;
-        var width = %(width)d;
-        var logScaleFlag = %(logScaleFlag)s;
-        var vAxisTitle = '%(ylabel)s';
-        var vAxisOpt;
-        if(logScaleFlag)
-        {
-            vAxisOpt = { title: vAxisTitle, logScale: true, format: 'scientific'};
-        }
-        else
-        {
-            vAxisOpt = { title: vAxisTitle };
-        }
-"""
-
-graphPgTemplate_numeric = """
-        var options = {
-            width: width,
-            height: height,
-            explorer: { actions: ['dragToZoom', 'rightClickToReset'], maxZoomIn: 0.01 },
-            curveType: 'function',
-            title: grTitle,
-            titleTextStyle: { fontSize: 18, bold: true },
-            hAxis: { title: dataArr[0][0] },
-            vAxis: vAxisOpt,
-            %(trendLineStr)s
-        };
-
-        var data = new google.visualization.DataTable();
-        var csvOut = "data:text/csv;charset=utf-8";
-        // Add column headers
-        for (var j = 0; j < dataArr[0].length; j++)
-        {
-            data.addColumn('number',dataArr[0][j]);
-            csvOut += ',' + dataArr[0][j];
-        }
-        csvOut += '\\n';
-
-        // Add columns
-        for (var i = 1; i < dataArr.length; i++)
-        {
-            data.addRow(dataArr[i]);
-            csvOut += dataArr[i].join(",") + '\\n';
-        }
-"""
-
-graphPgTemplate_string = """
-        var options = {
-            width: width,
-            height: height,
-            explorer: { actions: ['dragToZoom', 'rightClickToReset'], maxZoomIn: 0.01 },
-            curveType: 'function',
-            title: grTitle,
-            titleTextStyle: { fontSize: 18, bold: true },
-            hAxis: { title: dataArr[0][0] },
-            vAxis: vAxisOpt,
-            %(trendLineStr)s
-        };
-
-        var data = new google.visualization.DataTable();
-        var csvOut = "data:text/csv;charset=utf-8";
-        // Add column headers
-        data.addColumn('string',dataArr[0][0]);
-        csvOut += ',' + dataArr[0][0];
-        for (var j = 0; j < dataArr[0].length-1; j++)
-        {
-           data.addColumn('number',dataArr[0][j+1]);
-           csvOut += ',' + dataArr[0][j+1];
-        }
-        csvOut += '\\n';
-
-        // Add columns
-        for (var i = 1; i < dataArr.length; i++)
-        {
-            data.addRow(dataArr[i]);
-            csvOut += dataArr[i].join(",") + '\\n';
-        }
-"""
-
-graphPgTemplate_dateTime = """
-        var options = {
-            width: width,
-            height: height,
-            explorer: { actions: ['dragToZoom', 'rightClickToReset'], maxZoomIn: 0.01 },
-            curveType: 'function',
-            title: grTitle,
-            titleTextStyle: { fontSize: 18, bold: true },
-            hAxis: { title: dataArr[0][0],
-               "gridlines": {
-                  "count": -1,
-                  "units": {
-                  "minutes": { "format": [ "HH:mm", "mm" ] },
-                  "hours": { "format": [ "MM/dd HH:mm", "HH" ] },
-                  "days": { "format": [ "MM/dd" ] },
-                  }
-               },
-               "minorGridlines": {
-                  "count": -1,
-                  "units": {
-                  "minutes": { "format": [ "HH:mm", "mm" ] },
-                  "hours": { "format": [ "MM/dd HH:mm", "HH" ] },
-                  "days": { "format": [ "MM/dd" ] },
-                  }
-               },
-            },
-            vAxis: vAxisOpt,
-            %(trendLineStr)s
-         };
-
-         var data = new google.visualization.DataTable();
-         var csvOut = "data:text/csv;charset=utf-8";
-         // Add column headers
-         data.addColumn('date',dataArr[0][0]);
-         csvOut += ',' + dataArr[0][0];
-         for (var j = 0; j < dataArr[0].length-1; j++)
-         {
-            data.addColumn('number',dataArr[0][j+1]);
-            csvOut += ',' + dataArr[0][j+1];
-         }
-         csvOut += '\\n';
-
-         var tmpArr;
-         // Add columns
-         for (var i = 0; i < dataArr.length-1; i++)
-         {
-            // Add time data
-            tempStr = dataArr[i+1][0];
-            year = parseInt(tempStr.substr(0,4));
-            month = parseInt(tempStr.substr(5,2))-1;
-            day = parseInt(tempStr.substr(8,2));
-            hour = parseInt(tempStr.substr(11,2));
-            minute = parseInt(tempStr.substr(14,2));
-            second = parseInt(tempStr.substr(17,2));
-            tmpArr = [new Date(year,month,day,hour,minute,second)];
-
-            data.addRow(tmpArr.concat(dataArr[i+1].slice(1,dataArr[i+1].length)));
-            csvOut += tempStr + ',' + dataArr[i+1].slice(1,dataArr[i+1].length).join(",") + '\\n';
-        }
-"""
-
-graphPgTemplate_hist = """
-        var options = {
-            width: width,
-            height: height,
-            title: grTitle,
-            titleTextStyle: { fontSize: 18, bold: true },
-            hAxis: { title: dataArr[0]},
-            vAxis: vAxisOpt,
-            %(trendLineStr)s
-        };
-
-        var data = new google.visualization.DataTable();
-        var csvOut = "data:text/csv;charset=utf-8";
-        // Add column header
-        data.addColumn('number',dataArr[0]);
-        csvOut += ',' + dataArr[0];
-        csvOut += '\\n';
-
-        // Add data
-        for (var i = 1; i < dataArr.length; i++)
-        {
-            data.addRow([dataArr[i]]);
-            csvOut += dataArr[i].toString()+'\\n';
-        }
-"""
-
-graphPgTemplateEnd = """
-        var chart = new google.visualization.%(plotType)s(document.getElementById('chart_div_%(numFig)d'));
-
-        chart.draw(data, options);
-        document.getElementById('pic_div_%(numFig)d').innerHTML = '<a href="' + chart.getImageURI() + '" download="'+grTitle+'.png">Download Figure</a>'
-        document.getElementById('csvFileDl_%(numFig)d').innerHTML = '<a href="' + encodeURI(csvOut) + '" download="'+grTitle+'.csv">Download CSV</a>'
-    }
-    </script>
-</head>
-<body>
-    <div id="chart_div_%(numFig)d"></div>
-    <div id="pic_div_%(numFig)d"></div>
-    <div id="csvFileDl_%(numFig)d"></div>
-</body>
-</html>
-"""
 
 #helper function to determine template type
 def templateType(xdata):
@@ -269,6 +71,10 @@ def combineData(xdata,ydata,xlabel):
     
     return data
 
+#helper function, returns title as a valid JS identifier, prefixed by '_'.
+def slugify(title):
+    return '_' + re.sub('[^\w\d_]', '_', title) #Make valid JS identifier
+
 ##main class
 class figure:
     '''GooPyCharts: a simple plotting tool for Python/Jupyter. See https://github.com/Dfenestrator/GooPyCharts for overview and examples.'''
@@ -294,24 +100,69 @@ class figure:
         self.height = height
         self.width = width
 
-    #display HTML helper method
-    def dispFile(self,nb):
-        if nb:
-            display(HTML(self.fname))
-        else:
-            webbrowser.open_new(self.fname)
+        #Set by the chart methods, can be printed out or exported to file.
+        self.javascript = 'No chart created yet. Use a chart method'
+
+    # Get the full HTML of the file.
+    def __str__(self):
+        return self.javascript
+
+    # Returns the drawFigure function from the JavaScript in its entirety.
+    def get_drawChart(self):
+        tabwidth = 4
+
+        start = self.javascript.find('function drawChart') - tabwidth
+        end = self.javascript.find('</head>') - len('</script>') - 1
+        print(start, end)
+        raw_drawChart = self.javascript[start:end]
+
+        #Unindent 4 spaces on all lines
+        final_drawChart = ''
+        for line in raw_drawChart.split('\n'):
+            final_drawChart += line[tabwidth:] + '\n'
+
+        final_drawChart = final_drawChart.rstrip()
+        return final_drawChart
+
+    #Write the JavaScript text out to file
+    def write(self):
+        with open(self.fname,'w') as f:
+            f.write(self.javascript)
+
+    #display HTML helper method. Trys nb() first, falls back on wb() if no notebook
+    #the nb parameter has been deprecated and does nothing.
+    def dispFile(self, nb=None):
+        if nb is not None:
+            warn('dispFile() nb paraneter is deprecated and does nothing.',
+                    DeprecationWarning)
+        try:
+            self.nb()
+        except NameError:
+            self.wb()
+
+    #Alias for dispFile()
+    def show(self):
+        self.dispFile()
+
+    #Displays in a Jupyter notebook. Writes current data first.
+    def nb(self):
+        self.write()
+        display(HTML(self.fname))
+
+    #Displays in a web browser. Writes current data first.
+    def wb(self):
+        self.write()
+        webbrowser.open_new(self.fname)
 
     #typical line chart plot
-    def plot(self,xdata,ydata=[],logScale=False,nb=False):
+    def plot(self,xdata,ydata=[],logScale=False,disp=True):
         '''Graphs a line plot.
         
         xdata: list of independent variable data. Can optionally include a header, see testGraph.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         ydata: list of dependent variable data. Can be multidimensional. If xdata includes a header, include a header list on ydata as well.
         logScale: set to True to set the y axis to log scale.
-        nb: for embedded plotting in notebooks. Recommended to use 'plot_nb' instead of setting this manually.
+        disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
         '''
-
-        f = open(self.fname,'w')
         
         #combine data into proper format
         #check if only 1 vector was sent, then plot against a count
@@ -328,7 +179,8 @@ class figure:
 
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data': str(data),
-                    'title': self.title,
+                    'title':self.title,
+                    'functionName':slugify(self.title),
                     'height': self.height,
                     'width': self.width,
                     'logScaleFlag': logScaleStr,
@@ -337,23 +189,20 @@ class figure:
                     'plotType': 'LineChart',
                     'numFig': self.numFig}
 
-        f.write(templateType(xdata) % argDict)
-        f.close()
-
-        self.dispFile(nb)
-
+        self.javascript = templateType(xdata) % argDict
+        
+        if disp:
+            self.dispFile()
+        
     #scatter plot
-    def scatter(self,xdata,ydata=[],trendline=False,nb=False):
+    def scatter(self,xdata,ydata=[],trendline=False,disp=True):
         '''Graphs a scatter plot.
         
         xdata: list of independent variable data. Can optionally include a header, see testGraph.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         ydata: list of dependent variable data. Can be multidimensional. If xdata includes a header, include a header list on ydata as well.
         trendline: set to True to plot a linear regression trend line through the first dependend variable.
-        nb: for embedded plotting in notebooks. Recommended to use 'scatter_nb' instead of setting this manually.
+        disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
         '''
-
-
-        f = open(self.fname,'w')
 
         #combine data into proper format
         #check if only 1 vector was sent, then plot against a count
@@ -371,6 +220,7 @@ class figure:
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data':str(data),
                     'title':self.title,
+                    'functionName':slugify(self.title),
                     'height':self.height,
                     'width':self.width,
                     'logScaleFlag':'false',
@@ -379,27 +229,27 @@ class figure:
                     'plotType':'ScatterChart',
                     'numFig':self.numFig}
 
-        f.write(templateType(xdata) % argDict)
-        f.close()
+        self.javascript = templateType(xdata) % argDict
 
-        self.dispFile(nb)
-    
+        if disp:
+            self.dispFile()
+            
     #bar chart
-    def bar(self,xdata,ydata,nb=False):
+    def bar(self,xdata,ydata,disp=True):
         '''Displays a bar graph.
         
         xdata: list of bar graph categories/bins. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         ydata: list of values associated with categories in xdata. If xdata includes a header, include a header list on ydata as well.
-        nb: for embedded plotting in notebooks. Recommended to use 'bar_nb' instead of setting this manually.
+        disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
         '''
-        f = open(self.fname,'w')
-        
+                
         #combine data into proper format
         data = combineData(xdata,ydata,self.xlabel)
 
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data':str(data),
                     'title':self.title,
+                    'functionName':slugify(self.title),
                     'height':self.height,
                     'width':self.width,
                     'logScaleFlag':'false',
@@ -407,26 +257,54 @@ class figure:
                     'trendLineStr':'',
                     'plotType':'BarChart',
                     'numFig':self.numFig}
-        f.write(templateType(xdata) % argDict)
-        f.close()
+        self.javascript = templateType(xdata) % argDict
+        
+        if disp:
+            self.dispFile()
+        
+    #column chart
+    def column(self,xdata,ydata,disp=True):
+        '''Displays a column graph. A bar chart with vertical bars.
+        
+        xdata: list of column graph categories/bins. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
+        ydata: list of values associated with categories in xdata. If xdata includes a header, include a header list on ydata as well.
+        disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
+        '''
+                
+        #combine data into proper format
+        data = combineData(xdata,ydata,self.xlabel)
 
-        self.dispFile(nb)
+        #input argument format to template is in dictionary format (see template for where variables are inserted)
+        argDict = { 'data':str(data),
+                    'title':self.title,
+                    'functionName':slugify(self.title),
+                    'height':self.height,
+                    'width':self.width,
+                    'logScaleFlag':'false',
+                    'ylabel':self.ylabel,
+                    'trendLineStr':'',
+                    'plotType':'ColumnChart',
+                    'numFig':self.numFig}
+        self.javascript = templateType(xdata) % argDict
 
+        if disp:
+            self.dispFile()
+        
     #histogram
-    def hist(self,xdata,nb=False):
+    def hist(self,xdata,disp=True):
         '''Graphs a histogram.
         
         xdata: List of values to bin. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
-        nb: for embedded plotting in notebooks. Recommended to use 'hist_nb' instead of setting this manually.
+        disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
         '''
-        f = open(self.fname,'w')
-        
+                
         #combine data into proper format
         data = [self.xlabel]+xdata
 
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data':str(data),
                     'title':self.title,
+                    'functionName':slugify(self.title),
                     'height':self.height,
                     'width':self.width,
                     'logScaleFlag':'false',
@@ -434,25 +312,29 @@ class figure:
                     'trendLineStr':'',
                     'plotType':'Histogram',
                     'numFig':self.numFig}
-        f.write((graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict)
-        f.close()
+        self.javascript = (graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict
 
-        self.dispFile(nb)
+        if disp:
+            self.dispFile()
     
-    #Jupyter plotting methods
+    #Jupyter plotting methods (depricated; keeping for now for backwards compatibility)
     def plot_nb(self,xdata,ydata=[],logScale=False):
         '''Graphs a line plot and embeds it in a Jupyter notebook. See 'help(figure.plot)' for more info.'''
-        self.plot(xdata,ydata,logScale,nb=True)
+        self.plot(xdata,ydata,logScale)
     
     def scatter_nb(self,xdata,ydata=[],trendline=False):
         '''Graphs a scatter plot and embeds it in a Jupyter notebook. See 'help(figure.scatter)' for more info.'''
-        self.scatter(xdata,ydata,trendline,nb=True)
+        self.scatter(xdata,ydata,trendline)
             
     def bar_nb(self,xdata,ydata):
         '''Displays a bar graph and embeds it in a Jupyter notebook. See 'help(figure.bar)' for more info.'''
-        self.bar(xdata,ydata,nb=True)
+        self.bar(xdata,ydata)
+
+    def column_nb(self,xdata,ydata):
+        '''Displays a column graph and embeds it in a Jupyter notebook. See 'help(figure.bar)' for more info.'''
+        self.column(xdata,ydata)
             
     def hist_nb(self,xdata):
         '''Graphs a histogram and embeds it in a Jupyter notebook. See 'help(figure.hist)' for more info.'''
-        self.hist(xdata,nb=True)        
+        self.hist(xdata)        
 
