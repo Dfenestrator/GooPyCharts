@@ -8,7 +8,7 @@ with open(path.join(here, 'README.md')) as f:
 
 setup(
     name='gpcharts',
-    version='1.2.1',
+    version='1.3.0',
     description='Google Charts API wrapper',
     long_description=long_description,
     url='https://github.com/Dfenestrator/GooPyCharts',
