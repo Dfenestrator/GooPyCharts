@@ -16,7 +16,6 @@ if python_version >= 3:
         sys.exit()
 
 # Module's meat begins
-from _templates import * #All the JavaScript graph templates
 from os import path
 from warnings import warn
 import webbrowser
