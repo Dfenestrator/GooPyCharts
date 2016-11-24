@@ -69,7 +69,7 @@ graphPgTemplate_numeric = """
             titleTextStyle: { fontSize: 18, bold: true },
             hAxis: { title: dataArr[0][0] },
             vAxis: vAxisOpt,
-            %(trendLineStr)s
+            %(other)s
         };
 
         var data = new google.visualization.DataTable();
@@ -100,7 +100,7 @@ graphPgTemplate_string = """
             titleTextStyle: { fontSize: 18, bold: true },
             hAxis: { title: dataArr[0][0] },
             vAxis: vAxisOpt,
-            %(trendLineStr)s
+            %(other)s
         };
 
         var data = new google.visualization.DataTable();
@@ -150,7 +150,7 @@ graphPgTemplate_dateTime = """
                },
             },
             vAxis: vAxisOpt,
-            %(trendLineStr)s
+            %(other)s
          };
 
          var data = new google.visualization.DataTable();
@@ -192,7 +192,7 @@ graphPgTemplate_hist = """
             titleTextStyle: { fontSize: 18, bold: true },
             hAxis: { title: dataArr[0]},
             vAxis: vAxisOpt,
-            %(trendLineStr)s
+            %(other)s
         };
 
         var data = new google.visualization.DataTable();
@@ -356,13 +356,14 @@ class figure:
         webbrowser.open_new(self.fname)
 
     #typical line chart plot
-    def plot(self,xdata,ydata=[],logScale=False,disp=True):
+    def plot(self,xdata,ydata=[],logScale=False,disp=True,**kwargs):
         '''Graphs a line plot.
         
         xdata: list of independent variable data. Can optionally include a header, see testGraph.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         ydata: list of dependent variable data. Can be multidimensional. If xdata includes a header, include a header list on ydata as well.
         logScale: set to True to set the y axis to log scale.
         disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
+        **kwargs: Access to other Google Charts API options. The key is the option name, the value is the option's full JS code.
         '''
         
         #combine data into proper format
@@ -378,6 +379,13 @@ class figure:
         else:
             logScaleStr = 'false'
 
+        #Include other options, supplied by **kwargs
+        other = ''
+
+        for option in kwargs:
+            print(option)
+            other += option + ': ' + kwargs[option] + ',\n'
+
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data': str(data),
                     'title':self.title,
@@ -386,9 +394,9 @@ class figure:
                     'width': self.width,
                     'logScaleFlag': logScaleStr,
                     'ylabel': self.ylabel,
-                    'trendLineStr': '',
                     'plotType': 'LineChart',
-                    'numFig': self.numFig}
+                    'numFig': self.numFig,
+                    'other': other}
 
         self.javascript = templateType(xdata) % argDict
         
@@ -396,13 +404,14 @@ class figure:
             self.dispFile()
         
     #scatter plot
-    def scatter(self,xdata,ydata=[],trendline=False,disp=True):
+    def scatter(self,xdata,ydata=[],trendline=False,disp=True,**kwargs):
         '''Graphs a scatter plot.
         
         xdata: list of independent variable data. Can optionally include a header, see testGraph.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         ydata: list of dependent variable data. Can be multidimensional. If xdata includes a header, include a header list on ydata as well.
         trendline: set to True to plot a linear regression trend line through the first dependend variable.
         disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
+        **kwargs: Access to other Google Charts API options. The key is the option name, the value is the option's full JS code.
         '''
 
         #combine data into proper format
@@ -412,11 +421,15 @@ class figure:
         else:
             data = combineData(range(len(xdata)),xdata,self.xlabel)
 
+        #Include other options, supplied by **kwargs
+        other = ''
+
         #insert trend line, if flag is set
         if trendline:
-            trendLineStr = 'trendlines: { 0: {showR2: true, visibleInLegend: true} }'
-        else:
-            trendLineStr = ''
+            other = 'trendlines: { 0: {showR2: true, visibleInLegend: true} },\n'
+
+        for option in kwargs:
+            other += option + ': ' + kwargs[option] + ',\n'
 
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data':str(data),
@@ -426,9 +439,9 @@ class figure:
                     'width':self.width,
                     'logScaleFlag':'false',
                     'ylabel':self.ylabel,
-                    'trendLineStr':trendLineStr,
                     'plotType':'ScatterChart',
-                    'numFig':self.numFig}
+                    'numFig':self.numFig,
+                    'other':other}
 
         self.javascript = templateType(xdata) % argDict
 
@@ -436,16 +449,23 @@ class figure:
             self.dispFile()
             
     #bar chart
-    def bar(self,xdata,ydata,disp=True):
+    def bar(self,xdata,ydata,disp=True,**kwargs):
         '''Displays a bar graph.
         
         xdata: list of bar graph categories/bins. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         ydata: list of values associated with categories in xdata. If xdata includes a header, include a header list on ydata as well.
         disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
+        **kwargs: Access to other Google Charts API options. The key is the option name, the value is the option's full JS code.
         '''
                 
         #combine data into proper format
         data = combineData(xdata,ydata,self.xlabel)
+
+        #Include other options, supplied by **kwargs
+        other = ''
+
+        for option in kwargs:
+            other += option + ': ' + kwargs[option] + ',\n'
 
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data':str(data),
@@ -455,26 +475,34 @@ class figure:
                     'width':self.width,
                     'logScaleFlag':'false',
                     'ylabel':self.ylabel,
-                    'trendLineStr':'',
                     'plotType':'BarChart',
-                    'numFig':self.numFig}
+                    'numFig':self.numFig,
+                    'other':other}
+
         self.javascript = templateType(xdata) % argDict
         
         if disp:
             self.dispFile()
         
     #column chart
-    def column(self,xdata,ydata,disp=True):
+    def column(self,xdata,ydata,disp=True,**kwargs):
         '''Displays a column graph. A bar chart with vertical bars.
         
         xdata: list of column graph categories/bins. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         ydata: list of values associated with categories in xdata. If xdata includes a header, include a header list on ydata as well.
         disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
+        **kwargs: Access to other Google Charts API options. The key is the option name, the value is the option's full JS code.
         '''
                 
         #combine data into proper format
         data = combineData(xdata,ydata,self.xlabel)
 
+        #Include other options, supplied by **kwargs
+        other = ''
+
+        for option in kwargs:
+            other += option + ': ' + kwargs[option] + ',\n'
+            
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data':str(data),
                     'title':self.title,
@@ -483,25 +511,33 @@ class figure:
                     'width':self.width,
                     'logScaleFlag':'false',
                     'ylabel':self.ylabel,
-                    'trendLineStr':'',
                     'plotType':'ColumnChart',
-                    'numFig':self.numFig}
+                    'numFig':self.numFig,
+                    'other':other}
+
         self.javascript = templateType(xdata) % argDict
 
         if disp:
             self.dispFile()
         
     #histogram
-    def hist(self,xdata,disp=True):
+    def hist(self,xdata,disp=True,**kwargs):
         '''Graphs a histogram.
         
         xdata: List of values to bin. Can optionally include a header, see testGraph_barAndHist.py in https://github.com/Dfenestrator/GooPyCharts for an example.
         disp: for displaying plots immediately. Set to True by default. Set to False for other operations, then use show() to display the plot.
+        **kwargs: Access to other Google Charts API options. The key is the option name, the value is the option's full JS code.
         '''
                 
         #combine data into proper format
         data = [self.xlabel]+xdata
 
+        #Include other options, supplied by **kwargs
+        other = ''
+
+        for option in kwargs:
+            other += option + ': ' + kwargs[option] + ',\n'
+            
         #input argument format to template is in dictionary format (see template for where variables are inserted)
         argDict = { 'data':str(data),
                     'title':self.title,
@@ -510,9 +546,10 @@ class figure:
                     'width':self.width,
                     'logScaleFlag':'false',
                     'ylabel':self.ylabel,
-                    'trendLineStr':'',
                     'plotType':'Histogram',
-                    'numFig':self.numFig}
+                    'numFig':self.numFig,
+                    'other':other}
+
         self.javascript = (graphPgTemplateStart+graphPgTemplate_hist+graphPgTemplateEnd) % argDict
 
         if disp:
