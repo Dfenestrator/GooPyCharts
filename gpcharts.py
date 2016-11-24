@@ -314,7 +314,6 @@ class figure:
 
         start = self.javascript.find('function drawChart') - tabwidth
         end = self.javascript.find('</head>') - len('</script>') - 1
-        print(start, end)
         raw_drawChart = self.javascript[start:end]
 
         #Unindent 4 spaces on all lines
@@ -383,7 +382,6 @@ class figure:
         other = ''
 
         for option in kwargs:
-            print(option)
             other += option + ': ' + kwargs[option] + ',\n'
 
         #input argument format to template is in dictionary format (see template for where variables are inserted)
