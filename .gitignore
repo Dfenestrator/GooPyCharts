@@ -1,0 +1,8 @@
+# Filter out files created by the package
+*html
+
+#Cache
+__pycache__/
+
+#Files related to distribution
+gpcharts.egg-info/
