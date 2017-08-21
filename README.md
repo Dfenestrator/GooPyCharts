@@ -37,13 +37,23 @@ For more examples, see [testGraph.py](examples/testGraph.py). Examples include s
 
 For timeseries, use as your x-axis the following format (as a string): 'yyyy-mm-dd HH:MM:SS'. The 'HH:MM:SS' is optional, but be consistent throughout your input. GooPyCharts will take care of the rest.
 
+Each kind of chart has a number of possible configuration options provided by the Google Chart API and GooPyCharts allows you to use any combination of them via keywork arguments. For example, to show a line chart without a legend and with straight lines between each of the po, you can write:
 
+```
+f1 = figure()
+f1.plot([1,2], legend="'none'", curveType="'straight'")
+```
+
+You can determine the name of the keyword arguments by consulting the [Google Charts API documentation](https://developers.google.com/chart/interactive/docs/customizing_charts) for each chart, such as the [Line Chart](https://developers.google.com/chart/interactive/docs/gallery/linechart#configuration-options). You'll notice that the example strings above are surrounded by single quotes. You are injecting a literal JavaScript option into the chart, so the final drawChart method will have single quotes around the option. This can be somewhat inconvenient, but it is necessary because certain options require dictionaries.
+
+You can use these customization features to overwrite the default options within GooPyCharts. The default GooPyCharts curveType is `'function'`, which produces curved lines, but the example above replaces that with the Google Charts API default, which is not curved.
 
 ## Features
 - line, scatter, bar, column, and histogram plots
 - plot multiple columns in one call
 - tooltips
-- best fit line for scatter plots
+- easy access to best fit line for scatter plots
+- full access to the charts' configuration options
 - save figure as HTML or PNG
 - save data to CSV
 - zooming (click and drag to zoom, right-click to reset zoom)
