@@ -7,7 +7,7 @@ A Google Charts API for Python 2 and 3, meant to be used as an alternative to ma
 
 ## Jupyter Screenshot
 
-![Alt text](assets/Sample Jupyter graph.png?raw=true "Jupyter example")
+![Alt text](assets/SampleJupyterGraph.png?raw=true "Jupyter example")
 
 You can find a Jupyter notebook with examples [here](examples/gpcharts%20test.ipynb). A Python script with examples can be found [here](examples/testGraph.py).
 
