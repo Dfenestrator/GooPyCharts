@@ -24,5 +24,5 @@ setup(
     ],
     keywords=['api'],
     packages=find_packages(),
-    install_requires=['future==0.16.0']
+    install_requires=['future==1.0.0']
 )
